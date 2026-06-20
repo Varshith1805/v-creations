@@ -3,6 +3,8 @@ const mongoose = require("mongoose");
 const orderSchema = new mongoose.Schema({
   customerName: String,
   email: String,
+  address: String,
+  phone: String,
   products: [{
     productId: { type: mongoose.Schema.Types.ObjectId, ref: "Product" },
     name: String,

@@ -79,7 +79,10 @@ export default function AdminDashboard() {
           <ul className="admin-list">
             {orders.map(o => (
               <li key={o._id} style={newOrderAlert?._id === o._id ? { background: "rgba(255,215,0,0.15)", borderRadius: 6, fontWeight: 600 } : undefined}>
-                <span>{o.customerName}</span>
+                <div>
+                  <strong>{o.customerName}</strong>
+                  {o.address && <div style={{fontSize:12,color:"var(--c-text-light)",marginTop:2}}>{o.address}{o.phone ? ` · ${o.phone}` : ""}</div>}
+                </div>
                 <span>₹{o.totalAmount} · {new Date(o.createdAt).toLocaleTimeString()}</span>
               </li>
             ))}

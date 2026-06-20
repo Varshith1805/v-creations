@@ -33,6 +33,8 @@ export default function Checkout() {
       await axios.post("/orders", {
         customerName: form.customerName,
         email: form.email,
+        phone: form.phone,
+        address: form.address,
         items: items.map(({ product, quantity }) => ({
           productId: product._id,
           name: product.name,
