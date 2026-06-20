@@ -43,14 +43,12 @@ function Header() {
             <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
             {count > 0 && <span className="cart-badge">{count}</span>}
           </Link>
-          <Link to="/admin" className="btn btn-primary" style={{padding:"6px 14px",fontSize:"13px"}}>Admin</Link>
         </div>
       </div>
       <nav className="header-nav container">
         <Link to="/" className={location.pathname === "/" ? "nav-link active" : "nav-link"}>Home</Link>
         <Link to="/cart" className={location.pathname === "/cart" ? "nav-link active" : "nav-link"}>Cart</Link>
         <Link to="/checkout" className={location.pathname === "/checkout" ? "nav-link active" : "nav-link"}>Checkout</Link>
-        <Link to="/admin" className={location.pathname === "/admin" ? "nav-link active" : "nav-link"}>Admin</Link>
         <span className="nav-link nav-promo">🪢 Rakhi Collection</span>
         <span className="nav-link nav-promo">✨ Premium Rakhis</span>
         <span className="nav-link nav-promo">🎀 Best Sellers</span>
