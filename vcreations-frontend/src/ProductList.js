@@ -123,8 +123,6 @@ export default function ProductList() {
           : displayed.map(p => (
               <div className="product-card" key={p._id}>
                 <div className="product-img" style={{ position: "relative" }}>
-                  <span className="card-badge card-badge--festive">Rakhi Special</span>
-                  <span className="card-badge card-badge--sale" style={{ left: "auto", right: 10, background: "var(--c-coral)" }}>-20%</span>
                   <ProductImg src={p.image} alt={p.name} />
                   <div className="product-quick-add">
                     <button onClick={() => handleAdd(p)}>Add to Cart</button>
@@ -134,9 +132,9 @@ export default function ProductList() {
                   <div className="product-name">{p.name}</div>
                   <div className="product-desc">{p.description}</div>
                   <div className="product-price-row">
-                    <span className="product-price product-price--sale">₹{Math.round(p.price * 0.8)}</span>
-                    <span className="product-price--original">₹{p.price}</span>
+                    <span className="product-price">₹{p.price}</span>
                   </div>
+                  {p.offers && p.offers.length > 0 && <div className="offer-badge">🎉 {p.offers.map(o => typeof o === "string" ? o : `Buy ${o.quantity} for ₹${o.price}`).join(", ")}</div>}
                   <div className={`product-stock ${p.stock <= 0 ? "product-stock--out" : p.stock < 5 ? "product-stock--low" : ""}`}>
                     {p.stock <= 0 ? "Out of stock" : `Only ${p.stock} left`}
                   </div>

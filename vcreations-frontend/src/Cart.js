@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback, useRef } from "react";
 import axios from "axios";
 import { Link } from "react-router-dom";
 import { useCart } from "./CartContext";
@@ -6,6 +6,8 @@ import { useCart } from "./CartContext";
 export default function Cart() {
   const { items, updateQuantity, removeFromCart } = useCart();
   const [priceInfo, setPriceInfo] = useState({});
+  const [offerPopup, setOfferPopup] = useState(null);
+  const prevQty = useRef({});
 
   const calculatePrice = useCallback(async (product, quantity) => {
     try {
@@ -14,12 +16,23 @@ export default function Cart() {
         quantity
       });
       setPriceInfo(prev => ({ ...prev, [product._id]: res.data }));
-    } catch { /* ignore */ }
+      return res.data;
+    } catch { return null; }
   }, []);
 
-  // Auto-apply offer when quantity changes
+  // Auto-apply offer when quantity changes + show popup
   useEffect(() => {
-    items.forEach(({ product, quantity }) => calculatePrice(product, quantity));
+    items.forEach(async ({ product, quantity }) => {
+      const prev = prevQty.current[product._id] || 0;
+      if (quantity > prev) {
+        const info = await calculatePrice(product, quantity);
+        if (info?.discountMessage) {
+          setOfferPopup(info.discountMessage);
+          setTimeout(() => setOfferPopup(null), 4000);
+        }
+      }
+      prevQty.current[product._id] = quantity;
+    });
   }, [items, calculatePrice]);
 
   if (items.length === 0) {
@@ -37,9 +50,12 @@ export default function Cart() {
 
   return (
     <div className="cart-page">
+      {offerPopup && <div className="toast" style={{ bottom: 80 }}><span>🎉 {offerPopup}</span></div>}
       <h2>Shopping Cart ({items.length} {items.length === 1 ? "item" : "items"})</h2>
       <div className="cart-items">
-        {items.map(({ product, quantity }) => (
+        {items.map(({ product, quantity }) => {
+          const info = priceInfo[product._id];
+          return (
           <div className="cart-item" key={product._id}>
             <img className="cart-item-img" src={product.image || "https://via.placeholder.com/100"} alt={product.name} />
             <div className="cart-item-info">
@@ -52,14 +68,15 @@ export default function Cart() {
               </div>
             </div>
             <div className="cart-item-total">
-              <div className="price">₹{priceInfo[product._id]?.totalPrice || product.price * quantity}</div>
+              <div className="price">₹{info?.totalPrice || product.price * quantity}</div>
+              {info?.discountMessage && <div style={{fontSize:11,color:"var(--c-gold)",marginTop:2}}>Offer applied!</div>}
               <div className="cart-item-actions">
-                <button className="btn-offer" onClick={() => calculatePrice(product, quantity)}>Apply Offer</button>
-                <button className="btn-remove" onClick={() => removeFromCart(product._id)}>Remove</button>
+                <button className="btn-remove" onClick={() => { prevQty.current[product._id] = 0; removeFromCart(product._id); }}>Remove</button>
               </div>
             </div>
           </div>
-        ))}
+          );
+        })}
       </div>
 
       <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginTop:24,flexWrap:"wrap",gap:12}}>

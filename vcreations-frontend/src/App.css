@@ -442,6 +442,8 @@
 .product-stock--low { color: var(--c-coral); }
 .product-stock--out { color: var(--c-error); }
 
+.offer-badge { font-size: 11px; color: var(--c-gold); margin-top: 4px; font-weight: 600; }
+
 /* ===== Load More ===== */
 .load-more {
   text-align: center;

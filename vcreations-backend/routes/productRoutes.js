@@ -46,7 +46,7 @@ router.post("/calculate-price", async (req, res) => {
       }
       if (qty === quantity) {
         totalPrice = price;
-        discountMessage = `🎉 Special Offer! Buy ${qty} for ₹${price} each`;
+        discountMessage = `Buy ${qty} for ₹${price} only!`;
       }
     }
   }
