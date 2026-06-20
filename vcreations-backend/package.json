@@ -1,0 +1,21 @@
+{
+  "name": "vcreations-backend",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "dependencies": {
+    "body-parser": "^2.3.0",
+    "cors": "^2.8.6",
+    "express": "^5.2.1",
+    "mongodb-memory-server": "^11.2.0",
+    "mongoose": "^9.7.1",
+    "twilio": "^6.0.2"
+  }
+}

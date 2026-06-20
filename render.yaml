@@ -1,0 +1,19 @@
+services:
+  - type: web
+    name: v-creations
+    env: node
+    buildCommand: cd vcreations-backend && npm install && cd ../vcreations-frontend && npm install && npm run build
+    startCommand: cd vcreations-backend && node server.js
+    envVars:
+      - key: NODE_VERSION
+        value: 18
+      - key: MONGO_URI
+        sync: false
+      - key: TWILIO_ACCOUNT_SID
+        sync: false
+      - key: TWILIO_AUTH_TOKEN
+        sync: false
+      - key: TWILIO_WHATSAPP_NUMBER
+        sync: false
+      - key: ADMIN_WHATSAPP_NUMBER
+        sync: false
