@@ -1,24 +1,14 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import axios from "axios";
 import { Link } from "react-router-dom";
 import { useCart } from "./CartContext";
 
 export default function Checkout() {
-  const { items, clearCart } = useCart();
+  const { items, appliedOffers, clearCart } = useCart();
   const [form, setForm] = useState({ customerName: "", email: "", phone: "", address: "" });
   const [submitted, setSubmitted] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-  const [priceInfo, setPriceInfo] = useState({});
-
-  useEffect(() => {
-    items.forEach(async ({ product, quantity }) => {
-      try {
-        const res = await axios.post("/products/calculate-price", { productId: product._id, quantity });
-        setPriceInfo(prev => ({ ...prev, [product._id]: res.data }));
-      } catch { /* use base price */ }
-    });
-  }, [items]);
 
   if (items.length === 0 && !submitted) {
     return (
@@ -31,7 +21,7 @@ export default function Checkout() {
     );
   }
 
-  const total = items.reduce((s, { product, quantity }) => s + (priceInfo[product._id]?.totalPrice || product.price * quantity), 0);
+  const total = items.reduce((s, { product, quantity }) => s + (appliedOffers[product._id]?.totalPrice || product.price * quantity), 0);
 
   const handleChange = e => setForm(prev => ({ ...prev, [e.target.name]: e.target.value }));
 
@@ -46,7 +36,7 @@ export default function Checkout() {
         phone: form.phone,
         address: form.address,
         items: items.map(({ product, quantity }) => {
-          const info = priceInfo[product._id];
+          const info = appliedOffers[product._id];
           const itemPrice = info ? info.totalPrice / quantity : product.price;
           return {
             productId: product._id,
