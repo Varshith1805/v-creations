@@ -2,12 +2,12 @@
   "$schema": "https://railway.app/railway.schema.json",
   "build": {
     "builder": "NIXPACKS",
-    "buildCommand": "cd vcreations-backend && npm install && cd ../vcreations-frontend && npm install && npm run build"
+    "buildCommand": "npm install --prefix vcreations-backend && npm install --prefix vcreations-frontend && npm run build --prefix vcreations-frontend"
   },
   "deploy": {
-    "startCommand": "cd vcreations-backend && node server.js",
+    "startCommand": "node vcreations-backend/server.js",
     "numReplicas": 1,
     "healthcheckPath": "/health",
-    "healthcheckTimeout": 120
+    "healthcheckTimeout": 300
   }
 }
