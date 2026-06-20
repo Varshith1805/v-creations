@@ -36,10 +36,18 @@ router.post("/calculate-price", async (req, res) => {
   let discountMessage = null;
 
   if (product.offers && product.offers.length > 0) {
-    const offer = product.offers.find(o => o.quantity === quantity);
-    if (offer) {
-      totalPrice = offer.price;
-      discountMessage = `🎉 Special Offer! Buy ${offer.quantity} ${product.name}s for ₹${offer.price}`;
+    for (const offer of product.offers) {
+      let qty, price;
+      if (typeof offer === "string") {
+        const parts = offer.split("for");
+        if (parts.length === 2) { qty = parseInt(parts[0].trim()); price = parseInt(parts[1].trim()); }
+      } else {
+        qty = offer.quantity; price = offer.price;
+      }
+      if (qty === quantity) {
+        totalPrice = price;
+        discountMessage = `🎉 Special Offer! Buy ${qty} for ₹${price} each`;
+      }
     }
   }
 

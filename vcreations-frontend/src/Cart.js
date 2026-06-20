@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import axios from "axios";
 import { Link } from "react-router-dom";
 import { useCart } from "./CartContext";
@@ -7,16 +7,20 @@ export default function Cart() {
   const { items, updateQuantity, removeFromCart } = useCart();
   const [priceInfo, setPriceInfo] = useState({});
 
-  const calculatePrice = async (product, quantity) => {
+  const calculatePrice = useCallback(async (product, quantity) => {
     try {
       const res = await axios.post("/products/calculate-price", {
         productId: product._id,
         quantity
       });
       setPriceInfo(prev => ({ ...prev, [product._id]: res.data }));
-      if (res.data.discountMessage) alert(res.data.discountMessage);
     } catch { /* ignore */ }
-  };
+  }, []);
+
+  // Auto-apply offer when quantity changes
+  useEffect(() => {
+    items.forEach(({ product, quantity }) => calculatePrice(product, quantity));
+  }, [items, calculatePrice]);
 
   if (items.length === 0) {
     return (

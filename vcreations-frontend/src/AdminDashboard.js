@@ -51,7 +51,7 @@ export default function AdminDashboard() {
         ...form,
         price: Number(form.price),
         stock: Number(form.stock),
-        offers: form.offers ? form.offers.split(",").map(s => s.trim()) : []
+        offers: form.offers ? form.offers.split(",").map(s => { const [qty, p] = s.trim().split("for"); return qty ? { quantity: parseInt(qty.trim()), price: parseInt(p.trim()) } : s.trim(); }) : []
       });
       setMessage({ text: "Product added successfully!", type: "success" });
       setForm({ name: "", description: "", price: "", stock: "", image: "", category: "", offers: "" });
