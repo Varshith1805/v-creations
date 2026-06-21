@@ -173,13 +173,47 @@ function drawCard(doc, x, y, w, h, product, imgBuffer, col) {
 }
 
 function drawImagePlaceholder(doc, x, y, w, h, product) {
-  const colors = ["#7B1818", "#DAA520", "#8B4513", "#A0522D", "#CD853F"];
-  const color = colors[(product.name || "").length % colors.length];
-  doc.rect(x, y, w, h).fill(color);
-  doc.rect(x, y, w, h).lineWidth(2).stroke(color === "#DAA520" ? "#B8860B" : "#DAA520");
+  const isGold = (product.name || "").length % 2 === 0;
+  const bg = isGold ? "#fef5e7" : "#fdf2f0";
+  const accent = isGold ? "#DAA520" : "#7B1818";
+  const light = isGold ? "#fde4c8" : "#f0d0d0";
+
+  doc.rect(x, y, w, h).fill(bg);
+  doc.rect(x, y, w, h).lineWidth(1.5).stroke(accent);
+
+  // Decorative border dots
+  for (let i = 5; i < w - 5; i += 12) {
+    doc.circle(x + i, y + 5, 1.5).fillOpacity(0.4).fill(accent).fillOpacity(1);
+    doc.circle(x + i, y + h - 5, 1.5).fillOpacity(0.4).fill(accent).fillOpacity(1);
+  }
+  for (let i = 5; i < h - 5; i += 12) {
+    doc.circle(x + 5, y + i, 1.5).fillOpacity(0.4).fill(accent).fillOpacity(1);
+    doc.circle(x + w - 5, y + i, 1.5).fillOpacity(0.4).fill(accent).fillOpacity(1);
+  }
+
+  // Center circle
+  const cx = x + w / 2;
+  const cy = y + h / 2;
+  doc.circle(cx, cy, 22).fillOpacity(0.12).fill(accent).fillOpacity(1);
+  doc.circle(cx, cy, 20).lineWidth(1).stroke(accent);
+
+  // Center small circle
+  doc.circle(cx, cy, 6).fillOpacity(0.25).fill(accent).fillOpacity(1);
+
+  // Rays around center
+  for (let a = 0; a < 360; a += 45) {
+    const rad = a * Math.PI / 180;
+    const r1 = 23;
+    const r2 = 30;
+    doc.line(cx + r1 * Math.cos(rad), cy + r1 * Math.sin(rad), cx + r2 * Math.cos(rad), cy + r2 * Math.sin(rad)).lineWidth(1).strokeOpacity(0.3).stroke(accent).strokeOpacity(1);
+  }
+
+  // Product initial
   const initial = (product.name || "R")[0].toUpperCase();
-  doc.fontSize(32).fillColor("#ffffff").font("Helvetica-Bold").text(initial, x, y + h / 2 - 16, { width: w, align: "center" });
-  doc.fontSize(8).fillColor("rgba(255,255,255,0.7)").font("Helvetica").text("Rakhi", x, y + h - 18, { width: w, align: "center" });
+  doc.fontSize(11).fillColor(accent).font("Helvetica-Bold").text(initial, cx - 5, cy - 6, { width: 10, align: "center" });
+
+  // Bottom label
+  doc.fontSize(7).fillColor("#999").font("Helvetica").text("Rakhi", x, y + h - 14, { width: w, align: "center" });
 }
 
 module.exports = { generateCatalog, CATALOG_PATH };
