@@ -73,23 +73,29 @@ async function generateCatalog() {
       const cardH = 200;
       const gapX = 20;
       const gapY = 20;
+      let curX = 45;
+      let curY = startY;
+      let colCount = 0;
 
       products.forEach((p, i) => {
-        const col = i % cols;
-        const row = Math.floor(i / cols);
-        const x = 45 + col * (cardW + gapX);
-        const y = startY + row * (cardH + gapY);
-
-        if (y + cardH > pageH - 35) {
+        if (curY + cardH > pageH - 35) {
           doc.addPage();
           doc.rect(0, 0, pageW, pageH).fill("#faf5ef");
           doc.rect(8, 8, pageW - 16, pageH - 16).lineWidth(2).stroke("#DAA520");
           doc.moveTo(0, 0).lineTo(pageW, 0).lineWidth(8).stroke("#7B1818");
           drawCircle(doc, 60, 50, 100);
           drawCircle(doc, pageW - 80, 60, 90);
-          drawCard(doc, x, 40, cardW, cardH, p, productImages[i], col);
-        } else {
-          drawCard(doc, x, y, cardW, cardH, p, productImages[i], col);
+          curX = 45;
+          curY = 40;
+          colCount = 0;
+        }
+        drawCard(doc, curX, curY, cardW, cardH, p, productImages[i], colCount);
+        colCount++;
+        curX += cardW + gapX;
+        if (colCount >= cols) {
+          curX = 45;
+          curY += cardH + gapY;
+          colCount = 0;
         }
       });
     }
