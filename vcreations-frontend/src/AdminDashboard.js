@@ -95,7 +95,7 @@ export default function AdminDashboard() {
         <div className="admin-card">
           <h3>Products ({products.length})</h3>
           <ul className="admin-list">
-            {products.map(p => <li key={p._id}><span>{p.name}</span><span>₹{p.price} · Stock: {p.stock}</span></li>)}
+            {products.map(p => <li key={p._id}><span><strong>{p.name}</strong><br /><span style={{fontSize:11,color:"#999"}}>{p.category}</span></span><span>₹{p.price} · Stock: {p.stock}</span></li>)}
             {products.length === 0 && <li style={{ color: "var(--c-text-light)", fontStyle: "italic" }}>No products yet — add one below</li>}
           </ul>
         </div>
@@ -120,7 +120,14 @@ export default function AdminDashboard() {
               </div>
               <div className="form-group">
                 <label>Category</label>
-                <input className="input" name="category" value={form.category} onChange={handleChange} />
+                <select className="input" name="category" value={form.category} onChange={handleChange}>
+                  <option value="">Select category</option>
+                  <option value="Designer Rakhis">Designer Rakhis</option>
+                  <option value="Silver Rakhis">Silver Rakhis</option>
+                  <option value="Gold Rakhis">Gold Rakhis</option>
+                  <option value="Kids Rakhis">Kids Rakhis</option>
+                  <option value="Premium Rakhis">Premium Rakhis</option>
+                </select>
               </div>
             </div>
             <div className="form-group">

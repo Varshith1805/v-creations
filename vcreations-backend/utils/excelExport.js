@@ -11,7 +11,7 @@ const COLUMNS = [
   { header: "Phone", key: "phone", width: 15 },
   { header: "Address", key: "address", width: 30 },
   { header: "Pincode", key: "pincode", width: 10 },
-  { header: "Items", key: "items", width: 40 },
+  { header: "Items", key: "items", width: 45 },
   { header: "Total Amount", key: "totalAmount", width: 14 },
   { header: "Status", key: "status", width: 12 },
 ];
