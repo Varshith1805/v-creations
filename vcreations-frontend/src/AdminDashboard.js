@@ -68,6 +68,7 @@ export default function AdminDashboard() {
       <h2>Admin Dashboard</h2>
       <div style={{display:"flex",gap:12,flexWrap:"wrap",marginBottom:20}}>
         <a href="/admin/download-excel" className="btn btn-primary" style={{fontSize:13}}>📥 Download Excel</a>
+        <a href="/admin/download-catalog" className="btn btn-secondary" style={{fontSize:13}}>📄 Download Catalog</a>
       </div>
       <div className="admin-grid">
         <div className="admin-card">
