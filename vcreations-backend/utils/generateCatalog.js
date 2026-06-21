@@ -205,7 +205,7 @@ function drawImagePlaceholder(doc, x, y, w, h, product) {
     const rad = a * Math.PI / 180;
     const r1 = 23;
     const r2 = 30;
-    doc.line(cx + r1 * Math.cos(rad), cy + r1 * Math.sin(rad), cx + r2 * Math.cos(rad), cy + r2 * Math.sin(rad)).lineWidth(1).strokeOpacity(0.3).stroke(accent).strokeOpacity(1);
+    doc.moveTo(cx + r1 * Math.cos(rad), cy + r1 * Math.sin(rad)).lineTo(cx + r2 * Math.cos(rad), cy + r2 * Math.sin(rad)).lineWidth(1).strokeOpacity(0.3).stroke(accent).strokeOpacity(1);
   }
 
   // Product initial
