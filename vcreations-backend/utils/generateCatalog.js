@@ -116,19 +116,18 @@ function drawCard(doc, x, y, w, h, product, imgBuffer, col) {
   // Product image area
   const imgX = x + 10;
   const imgY = y + 12;
-  const imgW = 90;
-  const imgH = 90;
+  const imgW = 85;
+  const imgH = 85;
 
-  doc.rect(imgX, imgY, imgW, imgH).lineWidth(1).stroke("#eee");
-
-  if (imgBuffer && imgBuffer.length > 100) {
+  if (imgBuffer && imgBuffer.length > 200) {
     try {
+      doc.rect(imgX, imgY, imgW, imgH).lineWidth(1).stroke("#e0d5c5");
       doc.image(imgBuffer, imgX, imgY, { width: imgW, height: imgH, fit: [imgW, imgH], align: "center", valign: "center" });
     } catch {
-      drawPlaceholder(doc, imgX, imgY, imgW, imgH, product.name);
+      drawImagePlaceholder(doc, imgX, imgY, imgW, imgH, product);
     }
   } else {
-    drawPlaceholder(doc, imgX, imgY, imgW, imgH, product.name);
+    drawImagePlaceholder(doc, imgX, imgY, imgW, imgH, product);
   }
 
   // Product name (right of image)
@@ -173,9 +172,14 @@ function drawCard(doc, x, y, w, h, product, imgBuffer, col) {
   doc.fillOpacity(1);
 }
 
-function drawPlaceholder(doc, x, y, w, h, name) {
-  doc.rect(x, y, w, h).fill("#f5f0e8");
-  doc.fontSize(9).fillColor("#B8A88A").font("Helvetica").text(name || "Rakhi", x, y + h / 2 - 8, { width: w, align: "center" });
+function drawImagePlaceholder(doc, x, y, w, h, product) {
+  const colors = ["#7B1818", "#DAA520", "#8B4513", "#A0522D", "#CD853F"];
+  const color = colors[(product.name || "").length % colors.length];
+  doc.rect(x, y, w, h).fill(color);
+  doc.rect(x, y, w, h).lineWidth(2).stroke(color === "#DAA520" ? "#B8860B" : "#DAA520");
+  const initial = (product.name || "R")[0].toUpperCase();
+  doc.fontSize(32).fillColor("#ffffff").font("Helvetica-Bold").text(initial, x, y + h / 2 - 16, { width: w, align: "center" });
+  doc.fontSize(8).fillColor("rgba(255,255,255,0.7)").font("Helvetica").text("Rakhi", x, y + h - 18, { width: w, align: "center" });
 }
 
 module.exports = { generateCatalog, CATALOG_PATH };
