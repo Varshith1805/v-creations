@@ -5,7 +5,7 @@ import { useCart } from "./CartContext";
 
 export default function Checkout() {
   const { items, appliedOffers, clearCart } = useCart();
-  const [form, setForm] = useState({ customerName: "", email: "", phone: "", address: "" });
+  const [form, setForm] = useState({ customerName: "", email: "", phone: "", address: "", pincode: "" });
   const [submitted, setSubmitted] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -35,6 +35,7 @@ export default function Checkout() {
         email: form.email,
         phone: form.phone,
         address: form.address,
+        pincode: form.pincode,
         items: items.map(({ product, quantity }) => {
           const info = appliedOffers[product._id];
           const itemPrice = info ? info.totalPrice / quantity : product.price;
@@ -105,6 +106,10 @@ export default function Checkout() {
               <div className="form-group">
                 <label>Address</label>
                 <textarea className="input" name="address" value={form.address} onChange={handleChange} rows={3} style={{resize:"vertical"}} />
+              </div>
+              <div className="form-group">
+                <label>Pincode</label>
+                <input className="input" name="pincode" value={form.pincode} onChange={handleChange} />
               </div>
               <button type="submit" className="btn btn-secondary" style={{width:"100%",padding:"14px",fontSize:16}} disabled={loading}>
                 {loading ? <><span className="spinner" /> Placing Order...</> : "Place Order"}

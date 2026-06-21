@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const Order = require("../models/Order");
+const { appendOrderToExcel } = require("../utils/excelExport");
 
 async function sendWhatsAppNotification(order) {
   const accountSid = process.env.TWILIO_ACCOUNT_SID;
@@ -21,7 +22,7 @@ async function sendWhatsAppNotification(order) {
 
     const message = await client.messages.create({
       from: `whatsapp:${from}`,
-      body: `🪢 *New Order Placed!*\n\n*Name:* ${order.customerName}\n*Phone:* ${order.phone || "—"}\n*Email:* ${order.email}\n*Address:* ${order.address || "—"}\n\n*Items:*\n${itemsList}\n\n*Total:* ₹${order.totalAmount}\n*Status:* ${order.status}`,
+      body: `🪢 *New Order Placed!*\n\n*Name:* ${order.customerName}\n*Phone:* ${order.phone || "—"}\n*Email:* ${order.email}\n*Address:* ${order.address || "—"}\n*Pincode:* ${order.pincode || "—"}\n\n*Items:*\n${itemsList}\n\n*Total:* ₹${order.totalAmount}\n*Status:* ${order.status}`,
       to: `whatsapp:${to}`
     });
 
@@ -32,7 +33,7 @@ async function sendWhatsAppNotification(order) {
 }
 
 router.post("/", async (req, res) => {
-  const { customerName, email, phone, address, items } = req.body;
+  const { customerName, email, phone, address, pincode, items } = req.body;
 
   if (!customerName || !email || !items || items.length === 0) {
     return res.status(400).json({ error: "Missing required fields" });
@@ -47,8 +48,10 @@ router.post("/", async (req, res) => {
 
   const totalAmount = products.reduce((sum, p) => sum + p.price * p.quantity, 0);
 
-  const order = new Order({ customerName, email, phone, address, products, totalAmount });
+  const order = new Order({ customerName, email, phone, address, pincode, products, totalAmount });
   await order.save();
+
+  appendOrderToExcel(order);
 
   sendWhatsAppNotification(order);
 
