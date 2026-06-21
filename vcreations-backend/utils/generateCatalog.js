@@ -2,6 +2,7 @@ const PDFDocument = require("pdfkit");
 const path = require("path");
 const fs = require("fs");
 const https = require("https");
+const http = require("http");
 const Product = require("../models/Product");
 
 const CATALOG_PATH = path.join(__dirname, "..", "..", "catalog.pdf");
@@ -11,14 +12,19 @@ function drawCircle(doc, x, y, r) {
 }
 
 function fetchImage(url) {
+  if (!url || typeof url !== "string") return Promise.resolve(null);
+  if (!url.startsWith("http")) return Promise.resolve(null);
   return new Promise((resolve) => {
-    if (!url) return resolve(null);
-    https.get(url, res => {
-      if (res.statusCode !== 200) return resolve(null);
+    const client = url.startsWith("https") ? https : http;
+    client.get(url, { timeout: 5000 }, res => {
+      if (res.statusCode < 200 || res.statusCode >= 400) {
+        res.resume();
+        return resolve(null);
+      }
       const chunks = [];
       res.on("data", c => chunks.push(c));
-      res.on("end", () => resolve(Buffer.concat(chunks)));
-    }).on("error", () => resolve(null));
+      res.on("end", () => resolve(chunks.length > 0 ? Buffer.concat(chunks) : null));
+    }).on("error", () => resolve(null)).on("timeout", function() { this.destroy(); resolve(null); });
   });
 }
 
@@ -115,14 +121,14 @@ function drawCard(doc, x, y, w, h, product, imgBuffer, col) {
 
   doc.rect(imgX, imgY, imgW, imgH).lineWidth(1).stroke("#eee");
 
-  if (imgBuffer) {
+  if (imgBuffer && imgBuffer.length > 100) {
     try {
       doc.image(imgBuffer, imgX, imgY, { width: imgW, height: imgH, fit: [imgW, imgH], align: "center", valign: "center" });
     } catch {
-      drawPlaceholder(doc, imgX, imgY, imgW, imgH, product);
+      drawPlaceholder(doc, imgX, imgY, imgW, imgH, product.name);
     }
   } else {
-    drawPlaceholder(doc, imgX, imgY, imgW, imgH, product);
+    drawPlaceholder(doc, imgX, imgY, imgW, imgH, product.name);
   }
 
   // Product name (right of image)
@@ -167,9 +173,9 @@ function drawCard(doc, x, y, w, h, product, imgBuffer, col) {
   doc.fillOpacity(1);
 }
 
-function drawPlaceholder(doc, x, y, w, h, product) {
+function drawPlaceholder(doc, x, y, w, h, name) {
   doc.rect(x, y, w, h).fill("#f5f0e8");
-  doc.fontSize(9).fillColor("#B8A88A").font("Helvetica").text("Rakhi", x, y + h / 2 - 8, { width: w, align: "center" });
+  doc.fontSize(9).fillColor("#B8A88A").font("Helvetica").text(name || "Rakhi", x, y + h / 2 - 8, { width: w, align: "center" });
 }
 
 module.exports = { generateCatalog, CATALOG_PATH };
