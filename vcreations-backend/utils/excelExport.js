@@ -1,7 +1,7 @@
 const ExcelJS = require("exceljs");
 const path = require("path");
 
-const EXCEL_PATH = path.join(__dirname, "..", "orders.xlsx");
+const EXCEL_PATH = path.join(__dirname, "..", "..", "orders.xlsx");
 
 const COLUMNS = [
   { header: "Order ID", key: "_id", width: 28 },
