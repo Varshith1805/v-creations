@@ -129,14 +129,24 @@ export default function ProductList() {
                   </div>
                 </div>
                 <div className="product-info">
+                  <div className="product-brand">Rakhi Special</div>
                   <div className="product-name">{p.name}</div>
-                  <div className="product-desc">{p.description}</div>
+                  <div className="product-rating">
+                    <span className="stars">{'★'.repeat(4)}{'☆'.repeat(1)}</span>
+                    <span className="rating-count">(12)</span>
+                  </div>
                   <div className="product-price-row">
                     <span className="product-price">₹{p.price}</span>
+                    <span className="product-price-original">₹{Math.round(p.price * 1.3)}</span>
+                    <span className="product-discount">-{Math.round((1 - p.price / (p.price * 1.3)) * 100)}%</span>
                   </div>
                   {p.offers && p.offers.length > 0 && <div className="offer-badge">🎉 {p.offers.map(o => typeof o === "string" ? o : `Buy ${o.quantity} for ₹${o.price}`).join(", ")}</div>}
+                  <div className="product-delivery">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
+                    <span>Free delivery by Rakshabandhan</span>
+                  </div>
                   <div className={`product-stock ${p.stock <= 0 ? "product-stock--out" : p.stock < 5 ? "product-stock--low" : ""}`}>
-                    {p.stock <= 0 ? "Out of stock" : `Only ${p.stock} left`}
+                    {p.stock <= 0 ? "Currently unavailable" : `Only ${p.stock} left in stock`}
                   </div>
                 </div>
               </div>
