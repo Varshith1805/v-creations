@@ -19,10 +19,11 @@ async function sendWhatsAppNotification(order) {
     const client = twilio(accountSid, authToken);
 
     const itemsList = order.products.map(p => `${p.name} x${p.quantity} — ₹${p.price * p.quantity}`).join("\n");
+    const truncatedItems = itemsList.length > 600 ? itemsList.slice(0, 600) + "\n...and more" : itemsList;
 
     const message = await client.messages.create({
       from: `whatsapp:${from}`,
-      body: `🪢 *New Order Placed!*\n\n*Name:* ${order.customerName}\n*Phone:* ${order.phone || "—"}\n*Email:* ${order.email}\n*Address:* ${order.address || "—"}\n*Pincode:* ${order.pincode || "—"}\n\n*Items:*\n${itemsList}\n\n*Total:* ₹${order.totalAmount}\n*Status:* ${order.status}`,
+      body: `*New Order Placed!*\n\n*Name:* ${order.customerName}\n*Phone:* ${order.phone || "—"}\n*Email:* ${order.email}\n*Address:* ${order.address || "—"}\n*Pincode:* ${order.pincode || "—"}\n\n*Items:*\n${truncatedItems}\n\n*Total:* ₹${order.totalAmount}`,
       to: `whatsapp:${to}`
     });
 
