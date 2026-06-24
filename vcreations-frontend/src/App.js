@@ -18,7 +18,7 @@ function ScrollToTop() {
 }
 
 function Header() {
-  const { items, userMobile } = useCart();
+  const { items, userEmail } = useCart();
   const count = items.reduce((s, i) => s + i.quantity, 0);
   const location = useLocation();
 
@@ -42,9 +42,9 @@ function Header() {
         </div>
 
         <div className="header-actions">
-          <Link to={userMobile ? "/orders" : "/login"} className="header-cart" style={{fontSize:13,gap:4}}>
+          <Link to={userEmail ? "/orders" : "/login"} className="header-cart" style={{fontSize:13,gap:4}}>
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-            {userMobile ? "Account" : "Login"}
+            {userEmail ? "Account" : "Login"}
           </Link>
           <Link to="/cart" className="header-cart">
             <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
@@ -56,7 +56,7 @@ function Header() {
         <Link to="/" className={location.pathname === "/" ? "nav-link active" : "nav-link"}>Home</Link>
         <Link to="/cart" className={location.pathname === "/cart" ? "nav-link active" : "nav-link"}>Cart</Link>
         <Link to="/checkout" className={location.pathname === "/checkout" ? "nav-link active" : "nav-link"}>Checkout</Link>
-        <Link to={userMobile ? "/orders" : "/login"} className={location.pathname === "/orders" || location.pathname === "/login" ? "nav-link active" : "nav-link"}>{userMobile ? "My Orders" : "Login"}</Link>
+        <Link to={userEmail ? "/orders" : "/login"} className={location.pathname === "/orders" || location.pathname === "/login" ? "nav-link active" : "nav-link"}>{userEmail ? "My Orders" : "Login"}</Link>
         <span className="nav-link nav-promo">🪢 Rakhi Collection</span>
         <span className="nav-link nav-promo">✨ Premium Rakhis</span>
         <span className="nav-link nav-promo">🎀 Best Sellers</span>

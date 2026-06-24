@@ -5,16 +5,16 @@ const CartContext = createContext();
 export function CartProvider({ children }) {
   const [items, setItems] = useState([]);
   const [appliedOffers, setAppliedOffers] = useState({});
-  const [userMobile, setUserMobile] = useState(localStorage.getItem("vc_user") || "");
+  const [userEmail, setUserEmail] = useState(localStorage.getItem("vc_user_email") || "");
 
-  const login = (mobile) => {
-    setUserMobile(mobile);
-    localStorage.setItem("vc_user", mobile);
+  const login = (email) => {
+    setUserEmail(email);
+    localStorage.setItem("vc_user_email", email);
   };
 
   const logout = () => {
-    setUserMobile("");
-    localStorage.removeItem("vc_user");
+    setUserEmail("");
+    localStorage.removeItem("vc_user_email");
   };
 
   const addToCart = (product, quantity = 1) => {
@@ -56,7 +56,7 @@ export function CartProvider({ children }) {
   };
 
   return (
-    <CartContext.Provider value={{ items, appliedOffers, userMobile, addToCart, removeFromCart, updateQuantity, clearCart, applyOffer, login, logout }}>
+    <CartContext.Provider value={{ items, appliedOffers, userEmail, addToCart, removeFromCart, updateQuantity, clearCart, applyOffer, login, logout }}>
       {children}
     </CartContext.Provider>
   );

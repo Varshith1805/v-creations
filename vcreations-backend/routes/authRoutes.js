@@ -1,14 +1,13 @@
 const express = require("express");
 const router = express.Router();
+const nodemailer = require("nodemailer");
 const User = require("../models/User");
 const Order = require("../models/Order");
 
-// In-memory OTP store (phone -> { otp, expires })
 const otpStore = new Map();
-// Cleanup expired OTPs every 10 minutes
 setInterval(() => {
-  for (const [phone, data] of otpStore) {
-    if (data.expires < Date.now()) otpStore.delete(phone);
+  for (const [email, data] of otpStore) {
+    if (data.expires < Date.now()) otpStore.delete(email);
   }
 }, 600000);
 
@@ -16,63 +15,67 @@ function generateOTP() {
   return Math.floor(1000 + Math.random() * 9000).toString();
 }
 
-async function sendSMS(phone, message) {
-  const accountSid = process.env.TWILIO_ACCOUNT_SID;
-  const authToken = process.env.TWILIO_AUTH_TOKEN;
-  if (!accountSid || !authToken) return false;
+async function sendEmailOTP(toEmail, otp) {
+  const user = process.env.EMAIL_USER;
+  const pass = process.env.EMAIL_PASS;
+  if (!user || !pass) return false;
   try {
-    const twilio = require("twilio");
-    const client = twilio(accountSid, authToken);
-    await client.messages.create({
-      from: process.env.TWILIO_PHONE_NUMBER,
-      body: message,
-      to: phone
+    const transporter = nodemailer.createTransport({
+      service: "gmail",
+      auth: { user, pass }
+    });
+    await transporter.sendMail({
+      from: `"V Creations" <${user}>`,
+      to: toEmail,
+      subject: "Your OTP for V Creations",
+      html: `<div style="font-family:sans-serif;max-width:480px;margin:0 auto;padding:24px;border:1px solid #e8e8e8;border-radius:8px">
+        <h2 style="color:#7B1818;text-align:center">V Creations</h2>
+        <p style="color:#333">Your OTP is:</p>
+        <div style="text-align:center;font-size:36px;font-weight:800;letter-spacing:8px;color:#7B1818;padding:16px;background:#fef5e7;border-radius:8px;margin:12px 0">${otp}</div>
+        <p style="color:#999;font-size:13px">Valid for 5 minutes.</p>
+        <hr style="border:none;border-top:1px solid #eee;margin:16px 0" />
+        <p style="color:#999;font-size:12px;text-align:center">V Creations - Rakshabandhan Collection</p>
+      </div>`
     });
     return true;
   } catch (err) {
-    console.error("SMS send failed:", err.message);
+    console.error("Email send failed:", err.message);
     return false;
   }
 }
 
-// Send OTP
 router.post("/send-otp", async (req, res) => {
-  const { mobile } = req.body;
-  if (!mobile) return res.status(400).json({ error: "Mobile number required" });
+  const { email } = req.body;
+  if (!email) return res.status(400).json({ error: "Email required" });
 
   const otp = generateOTP();
-  otpStore.set(mobile, { otp, expires: Date.now() + 300000 });
+  otpStore.set(email, { otp, expires: Date.now() + 300000 });
 
-  // If Twilio SMS is configured, send via SMS
-  const sent = await sendSMS(mobile, `Your V Creations OTP is: ${otp}. Valid for 5 minutes.`);
-
-  // Always return OTP in response for development (remove in production!)
-  res.json({ message: sent ? "OTP sent via SMS" : "OTP sent", otp, dev: otp });
+  const sent = await sendEmailOTP(email, otp);
+  res.json({ message: sent ? "OTP sent to email" : "OTP generated", dev: otp });
 });
 
-// Verify OTP
 router.post("/verify-otp", async (req, res) => {
-  const { mobile, otp } = req.body;
-  if (!mobile || !otp) return res.status(400).json({ error: "Mobile and OTP required" });
+  const { email, otp } = req.body;
+  if (!email || !otp) return res.status(400).json({ error: "Email and OTP required" });
 
-  const data = otpStore.get(mobile);
-  if (!data) return res.status(400).json({ error: "No OTP requested. Please request OTP first." });
+  const data = otpStore.get(email);
+  if (!data) return res.status(400).json({ error: "No OTP requested" });
   if (data.expires < Date.now()) {
-    otpStore.delete(mobile);
-    return res.status(400).json({ error: "OTP expired. Please request again." });
+    otpStore.delete(email);
+    return res.status(400).json({ error: "OTP expired" });
   }
   if (data.otp !== otp) return res.status(400).json({ error: "Invalid OTP" });
 
-  otpStore.delete(mobile);
-  let user = await User.findOne({ mobile });
-  if (!user) user = await new User({ mobile }).save();
+  otpStore.delete(email);
+  let user = await User.findOne({ email });
+  if (!user) user = await new User({ email }).save();
 
-  res.json({ message: "Login successful", mobile: user.mobile, userId: user._id });
+  res.json({ message: "Login successful", email: user.email, userId: user._id });
 });
 
-// Get user's past orders
-router.get("/orders/:mobile", async (req, res) => {
-  const orders = await Order.find({ "phone": req.params.mobile }).sort({ createdAt: -1 });
+router.get("/orders/:email", async (req, res) => {
+  const orders = await Order.find({ email: req.params.email }).sort({ createdAt: -1 });
   res.json(orders);
 });
 

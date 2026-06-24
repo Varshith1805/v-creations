@@ -4,19 +4,19 @@ import { Link } from "react-router-dom";
 import { useCart } from "./CartContext";
 
 export default function UserOrders() {
-  const { userMobile, logout } = useCart();
+  const { userEmail, logout } = useCart();
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (!userMobile) return;
-    axios.get(`/auth/orders/${encodeURIComponent(userMobile)}`)
+    if (!userEmail) return;
+    axios.get(`/auth/orders/${encodeURIComponent(userEmail)}`)
       .then(res => setOrders(res.data))
       .catch(() => {})
       .finally(() => setLoading(false));
-  }, [userMobile]);
+  }, [userEmail]);
 
-  if (!userMobile) {
+  if (!userEmail) {
     return (
       <div className="cart-empty">
         <h3>Please sign in to view your orders</h3>
