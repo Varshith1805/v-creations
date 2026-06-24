@@ -5,6 +5,17 @@ const CartContext = createContext();
 export function CartProvider({ children }) {
   const [items, setItems] = useState([]);
   const [appliedOffers, setAppliedOffers] = useState({});
+  const [userMobile, setUserMobile] = useState(localStorage.getItem("vc_user") || "");
+
+  const login = (mobile) => {
+    setUserMobile(mobile);
+    localStorage.setItem("vc_user", mobile);
+  };
+
+  const logout = () => {
+    setUserMobile("");
+    localStorage.removeItem("vc_user");
+  };
 
   const addToCart = (product, quantity = 1) => {
     setItems(prev => {
@@ -45,7 +56,7 @@ export function CartProvider({ children }) {
   };
 
   return (
-    <CartContext.Provider value={{ items, appliedOffers, addToCart, removeFromCart, updateQuantity, clearCart, applyOffer }}>
+    <CartContext.Provider value={{ items, appliedOffers, userMobile, addToCart, removeFromCart, updateQuantity, clearCart, applyOffer, login, logout }}>
       {children}
     </CartContext.Provider>
   );

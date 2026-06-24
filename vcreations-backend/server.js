@@ -31,10 +31,12 @@ async function connectDB() {
 const productRoutes = require("./routes/productRoutes");
 const adminRoutes = require("./routes/adminRoutes");
 const orderRoutes = require("./routes/orderRoutes");
+const authRoutes = require("./routes/authRoutes");
 
 app.use("/products", productRoutes);
 app.use("/admin", adminRoutes);
 app.use("/orders", orderRoutes);
+app.use("/auth", authRoutes);
 
 const frontendBuild = path.join(__dirname, "..", "vcreations-frontend", "build");
 app.use(express.static(frontendBuild));
