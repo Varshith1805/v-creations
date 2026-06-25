@@ -73,7 +73,7 @@ export default function Login() {
                 value={otp} onChange={e => setOtp(e.target.value.replace(/\D/g, ""))}
                 style={{ textAlign: "center", fontSize: 22, letterSpacing: 8, fontWeight: 700 }} />
             </div>
-            {devOtp && <p style={{ background: "#fef5e7", padding: "8px 12px", borderRadius: 4, fontSize: 13, marginBottom: 12, color: "#7B1818" }}>Your OTP is: <strong>{devOtp}</strong></p>}
+            {devOtp && <p style={{ background: "#fef5e7", padding: "8px 12px", borderRadius: 4, fontSize: 13, marginBottom: 12, color: "#7B1818" }}>Your OTP is: <strong>{devOtp}</strong> <span style={{ color: "#999" }}>(Email not delivered — enter this OTP)</span></p>}
             <button className="btn btn-secondary" style={{ width: "100%", padding: 12, fontSize: 15 }}
               onClick={verifyOtp} disabled={loading}>
               {loading ? "Verifying..." : "Verify OTP"}

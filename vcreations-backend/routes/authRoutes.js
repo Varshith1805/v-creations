@@ -1,5 +1,6 @@
 const express = require("express");
 const router = express.Router();
+const nodemailer = require("nodemailer");
 const User = require("../models/User");
 const Order = require("../models/Order");
 
@@ -14,6 +15,37 @@ function generateOTP() {
   return Math.floor(1000 + Math.random() * 9000).toString();
 }
 
+async function sendEmailOTP(toEmail, otp) {
+  const user = process.env.EMAIL_USER;
+  const pass = process.env.EMAIL_PASS;
+  if (!user || !pass) return false;
+  try {
+    const transporter = nodemailer.createTransport({
+      host: "smtp.gmail.com",
+      port: 587,
+      secure: false,
+      auth: { user, pass }
+    });
+    await transporter.sendMail({
+      from: `"V Creations" <${user}>`,
+      to: toEmail,
+      subject: "Your OTP for V Creations",
+      html: `<div style="font-family:sans-serif;max-width:480px;margin:0 auto;padding:24px;border:1px solid #e8e8e8;border-radius:8px">
+        <h2 style="color:#7B1818;text-align:center">V Creations</h2>
+        <p style="color:#333">Your OTP is:</p>
+        <div style="text-align:center;font-size:36px;font-weight:800;letter-spacing:8px;color:#7B1818;padding:16px;background:#fef5e7;border-radius:8px;margin:12px 0">${otp}</div>
+        <p style="color:#999;font-size:13px">Valid for 5 minutes.</p>
+        <hr style="border:none;border-top:1px solid #eee;margin:16px 0" />
+        <p style="color:#999;font-size:12px;text-align:center">V Creations - Rakshabandhan Collection</p>
+      </div>`
+    });
+    return true;
+  } catch (err) {
+    console.error("Email send failed:", err.message, err.code);
+    return false;
+  }
+}
+
 router.post("/send-otp", async (req, res) => {
   const { email } = req.body;
   if (!email) return res.status(400).json({ error: "Email required" });
@@ -21,7 +53,8 @@ router.post("/send-otp", async (req, res) => {
   const otp = generateOTP();
   otpStore.set(email, { otp, expires: Date.now() + 300000 });
 
-  res.json({ message: "OTP generated", dev: otp });
+  const sent = await sendEmailOTP(email, otp);
+  res.json({ message: sent ? "OTP sent to email" : "OTP generated", dev: otp });
 });
 
 router.post("/verify-otp", async (req, res) => {
