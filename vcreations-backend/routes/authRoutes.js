@@ -17,6 +17,7 @@ function generateOTP() {
 async function sendEmailOTP(toEmail, otp) {
   const apiKey = process.env.BREVO_API_KEY;
   if (!apiKey) return false;
+  console.log("Fetch available:", typeof fetch);
   try {
     const res = await fetch("https://api.brevo.com/v3/smtp/email", {
       method: "POST",
@@ -55,7 +56,9 @@ router.post("/send-otp", async (req, res) => {
   const otp = generateOTP();
   otpStore.set(email, { otp, expires: Date.now() + 300000 });
 
+  console.log("Send OTP requested for:", email);
   const sent = await sendEmailOTP(email, otp);
+  console.log("Email send result:", sent);
   res.json({ message: sent ? "OTP sent to email" : "OTP generated", dev: otp });
 });
 
