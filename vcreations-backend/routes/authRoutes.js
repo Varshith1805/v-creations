@@ -18,41 +18,35 @@ function generateOTP() {
 async function sendEmailOTP(toEmail, otp) {
   const apiKey = process.env.BREVO_API_KEY;
   if (!apiKey) return false;
-  return new Promise(resolve => {
-    const postData = JSON.stringify({
-      sender: { name: "V Creations", email: "ravikantivarshith1@gmail.com" },
-      to: [{ email: toEmail }],
-      subject: "Your OTP for V Creations",
-      htmlContent: `<div style="font-family:sans-serif;max-width:480px;margin:0 auto;padding:24px;border:1px solid #e8e8e8;border-radius:8px">
-        <h2 style="color:#7B1818;text-align:center">V Creations</h2>
-        <p style="color:#333">Your OTP is:</p>
-        <div style="text-align:center;font-size:36px;font-weight:800;letter-spacing:8px;color:#7B1818;padding:16px;background:#fef5e7;border-radius:8px;margin:12px 0">${otp}</div>
-        <p style="color:#999;font-size:13px">Valid for 5 minutes.</p>
-        <hr style="border:none;border-top:1px solid #eee;margin:16px 0" />
-        <p style="color:#999;font-size:12px;text-align:center">V Creations - Rakshabandhan Collection</p>
-      </div>`
-    });
-    const req = https.request({
-      hostname: "api.brevo.com",
-      path: "/v3/smtp/email",
+  try {
+    const res = await fetch("https://api.brevo.com/v3/smtp/email", {
       method: "POST",
       headers: {
         "api-key": apiKey,
-        "Content-Type": "application/json",
-        "Content-Length": Buffer.byteLength(postData)
-      }
-    }, res => {
-      let body = "";
-      res.on("data", c => body += c);
-      res.on("end", () => {
-        if (res.statusCode === 201 || res.statusCode === 200) resolve(true);
-        else { console.error("Brevo error:", body); resolve(false); }
-      });
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        sender: { name: "V Creations", email: "ravikantivarshith1@gmail.com" },
+        to: [{ email: toEmail }],
+        subject: "Your OTP for V Creations",
+        htmlContent: `<div style="font-family:sans-serif;max-width:480px;margin:0 auto;padding:24px;border:1px solid #e8e8e8;border-radius:8px">
+          <h2 style="color:#7B1818;text-align:center">V Creations</h2>
+          <p style="color:#333">Your OTP is:</p>
+          <div style="text-align:center;font-size:36px;font-weight:800;letter-spacing:8px;color:#7B1818;padding:16px;background:#fef5e7;border-radius:8px;margin:12px 0">${otp}</div>
+          <p style="color:#999;font-size:13px">Valid for 5 minutes.</p>
+          <hr style="border:none;border-top:1px solid #eee;margin:16px 0" />
+          <p style="color:#999;font-size:12px;text-align:center">V Creations - Rakshabandhan Collection</p>
+        </div>`
+      })
     });
-    req.on("error", err => { console.error("Brevo failed:", err.message); resolve(false); });
-    req.write(postData);
-    req.end();
-  });
+    if (res.ok) return true;
+    const errBody = await res.text();
+    console.error("Brevo error:", errBody);
+    return false;
+  } catch (err) {
+    console.error("Brevo failed:", err.message);
+    return false;
+  }
 }
 
 router.post("/send-otp", async (req, res) => {
