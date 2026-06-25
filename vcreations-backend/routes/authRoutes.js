@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const nodemailer = require("nodemailer");
+const sgMail = require("@sendgrid/mail");
 const User = require("../models/User");
 const Order = require("../models/Order");
 
@@ -16,19 +16,13 @@ function generateOTP() {
 }
 
 async function sendEmailOTP(toEmail, otp) {
-  const user = process.env.EMAIL_USER;
-  const pass = process.env.EMAIL_PASS;
-  if (!user || !pass) return false;
+  const apiKey = process.env.SENDGRID_API_KEY;
+  if (!apiKey) return false;
   try {
-    const transporter = nodemailer.createTransport({
-      host: "smtp.gmail.com",
-      port: 587,
-      secure: false,
-      auth: { user, pass }
-    });
-    await transporter.sendMail({
-      from: `"V Creations" <${user}>`,
+    sgMail.setApiKey(apiKey);
+    await sgMail.send({
       to: toEmail,
+      from: { email: "ravikantivarshith1@gmail.com", name: "V Creations" },
       subject: "Your OTP for V Creations",
       html: `<div style="font-family:sans-serif;max-width:480px;margin:0 auto;padding:24px;border:1px solid #e8e8e8;border-radius:8px">
         <h2 style="color:#7B1818;text-align:center">V Creations</h2>
@@ -41,7 +35,7 @@ async function sendEmailOTP(toEmail, otp) {
     });
     return true;
   } catch (err) {
-    console.error("Email send failed:", err.message, err.code);
+    console.error("SendGrid error:", err.response?.body || err.message);
     return false;
   }
 }
