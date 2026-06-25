@@ -48,7 +48,7 @@ export default function Login() {
       <div className="checkout-summary" style={{ textAlign: "center", padding: 32 }}>
         <h2 style={{ marginBottom: 16 }}>{step === "email" ? "Sign In" : "Verify OTP"}</h2>
         <p style={{ color: "#666", marginBottom: 24, fontSize: 14 }}>
-          {step === "email" ? "Enter your email to receive an OTP" : `OTP sent to ${email}`}
+          {step === "email" ? "Enter your email to sign in" : `OTP sent to ${email}`}
         </p>
 
         {error && <p className="admin-error">{error}</p>}
@@ -73,7 +73,7 @@ export default function Login() {
                 value={otp} onChange={e => setOtp(e.target.value.replace(/\D/g, ""))}
                 style={{ textAlign: "center", fontSize: 22, letterSpacing: 8, fontWeight: 700 }} />
             </div>
-            {devOtp && <p style={{ background: "#fef5e7", padding: "8px 12px", borderRadius: 4, fontSize: 13, marginBottom: 12, color: "#7B1818" }}>Your OTP is: <strong>{devOtp}</strong> <span style={{ color: "#999" }}>(Email not delivered — enter this OTP)</span></p>}
+            {devOtp && <p style={{ background: "#fef5e7", padding: "8px 12px", borderRadius: 4, fontSize: 13, marginBottom: 12, color: "#7B1818" }}>Your OTP is: <strong>{devOtp}</strong></p>}
             <button className="btn btn-secondary" style={{ width: "100%", padding: 12, fontSize: 15 }}
               onClick={verifyOtp} disabled={loading}>
               {loading ? "Verifying..." : "Verify OTP"}
