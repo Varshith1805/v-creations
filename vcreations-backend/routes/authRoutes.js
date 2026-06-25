@@ -1,6 +1,5 @@
 const express = require("express");
 const router = express.Router();
-const https = require("https");
 const User = require("../models/User");
 const Order = require("../models/Order");
 
