@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const nodemailer = require("nodemailer");
+const https = require("https");
 const User = require("../models/User");
 const Order = require("../models/Order");
 
@@ -16,18 +16,12 @@ function generateOTP() {
 }
 
 async function sendEmailOTP(toEmail, otp) {
-  const user = process.env.EMAIL_USER;
-  const pass = process.env.EMAIL_PASS;
-  if (!user || !pass) return false;
-  try {
-    const transporter = nodemailer.createTransport({
-      host: "smtp.gmail.com",
-      port: 465,
-      secure: true,
-      auth: { user, pass }
-    });
-    await transporter.sendMail({
-      from: `"V Creations" <${user}>`,
+  const apiKey = process.env.MAILGUN_API_KEY;
+  const domain = process.env.MAILGUN_DOMAIN;
+  if (!apiKey || !domain) return false;
+  return new Promise(resolve => {
+    const postData = new URLSearchParams({
+      from: `"V Creations" <noreply@${domain}>`,
       to: toEmail,
       subject: "Your OTP for V Creations",
       html: `<div style="font-family:sans-serif;max-width:480px;margin:0 auto;padding:24px;border:1px solid #e8e8e8;border-radius:8px">
@@ -38,12 +32,28 @@ async function sendEmailOTP(toEmail, otp) {
         <hr style="border:none;border-top:1px solid #eee;margin:16px 0" />
         <p style="color:#999;font-size:12px;text-align:center">V Creations - Rakshabandhan Collection</p>
       </div>`
+    }).toString();
+    const req = https.request({
+      hostname: "api.mailgun.net",
+      path: `/v3/${domain}/messages`,
+      method: "POST",
+      headers: {
+        "Authorization": "Basic " + Buffer.from("api:" + apiKey).toString("base64"),
+        "Content-Type": "application/x-www-form-urlencoded",
+        "Content-Length": Buffer.byteLength(postData)
+      }
+    }, res => {
+      let body = "";
+      res.on("data", c => body += c);
+      res.on("end", () => {
+        if (res.statusCode === 200) resolve(true);
+        else { console.error("Mailgun error:", body); resolve(false); }
+      });
     });
-    return true;
-  } catch (err) {
-    console.error("Email send failed:", err.message, err.code);
-    return false;
-  }
+    req.on("error", err => { console.error("Mailgun failed:", err.message); resolve(false); });
+    req.write(postData);
+    req.end();
+  });
 }
 
 router.post("/send-otp", async (req, res) => {
