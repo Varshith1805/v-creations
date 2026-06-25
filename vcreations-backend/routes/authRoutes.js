@@ -20,7 +20,7 @@ async function sendEmailOTP(toEmail, otp) {
   if (!apiKey) return false;
   return new Promise(resolve => {
     const postData = JSON.stringify({
-      sender: { name: "V Creations", email: "noreply@vcreations.shop" },
+      sender: { name: "V Creations", email: "ravikantivarshith1@gmail.com" },
       to: [{ email: toEmail }],
       subject: "Your OTP for V Creations",
       htmlContent: `<div style="font-family:sans-serif;max-width:480px;margin:0 auto;padding:24px;border:1px solid #e8e8e8;border-radius:8px">
