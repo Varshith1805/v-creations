@@ -43,17 +43,17 @@ export default function UserOrders() {
       ) : (
         <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
           {orders.map(o => (
-            <div key={o._id} style={{ background: "white", border: "1px solid #e8e8e8", padding: 16 }}>
+            <div key={o._id} style={{ background: "white", border: "1px solid var(--c-border)", padding: 16, borderRadius: 10 }}>
               <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 8, fontSize: 13 }}>
-                <span style={{ color: "#666" }}>{new Date(o.createdAt).toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" })}</span>
-                <span style={{ fontWeight: 700, color: o.status === "pending" ? "var(--c-accent-dark)" : "#007600" }}>{o.status}</span>
+                <span style={{ color: "#555" }}>{new Date(o.createdAt).toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" })}</span>
+                <span style={{ fontWeight: 700, color: o.status === "pending" ? "#c77000" : "#007600" }}>{o.status}</span>
               </div>
-              <div style={{ fontSize: 14, color: "#333", marginBottom: 6 }}>
+              <div style={{ fontSize: 15, color: "#111", marginBottom: 6, fontWeight: 500 }}>
                 {o.products.map(p => `${p.name} x${p.quantity}`).join(", ")}
               </div>
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                <span style={{ fontSize: 12, color: "#999" }}>{o.phone} · {o.address}</span>
-                <span style={{ fontSize: 18, fontWeight: 700, color: "var(--c-primary)" }}>₹{o.totalAmount}</span>
+                <span style={{ fontSize: 13, color: "#444" }}>{o.phone} · {o.address}, {o.pincode}</span>
+                <span style={{ fontSize: 20, fontWeight: 800, color: "var(--c-primary)" }}>₹{o.totalAmount}</span>
               </div>
             </div>
           ))}
