@@ -2,7 +2,6 @@ const express = require("express");
 const router = express.Router();
 const axios = require("axios");
 const Order = require("../models/Order");
-const { appendOrderToExcel } = require("../utils/excelExport");
 
 const ADMIN_EMAIL = "ravikantivarshith1@gmail.com";
 
@@ -64,7 +63,6 @@ router.post("/", async (req, res) => {
     const order = new Order({ customerName, email, phone, address, pincode, products, totalAmount });
     await order.save();
 
-    appendOrderToExcel(order).catch(err => console.error("Excel error:", err.message));
     sendEmailNotification(order);
 
     res.status(201).json({ message: "Order placed!", order });
