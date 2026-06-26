@@ -46,8 +46,8 @@ async function sendEmailNotification(order) {
 router.post("/", async (req, res) => {
   const { customerName, email, phone, address, pincode, items } = req.body;
 
-  if (!customerName || !email || !items || items.length === 0) {
-    return res.status(400).json({ error: "Missing required fields" });
+  if (!customerName || !email || !phone || !address || !pincode || !items || items.length === 0) {
+    return res.status(400).json({ error: "All fields are required" });
   }
 
   const products = items.map(item => ({

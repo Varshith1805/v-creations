@@ -101,15 +101,15 @@ export default function Checkout() {
               </div>
               <div className="form-group">
                 <label>Phone</label>
-                <input className="input" name="phone" value={form.phone} onChange={handleChange} />
+                <input className="input" name="phone" value={form.phone} onChange={handleChange} required />
               </div>
               <div className="form-group">
                 <label>Address</label>
-                <textarea className="input" name="address" value={form.address} onChange={handleChange} rows={3} style={{resize:"vertical"}} />
+                <textarea className="input" name="address" value={form.address} onChange={handleChange} rows={3} style={{resize:"vertical"}} required />
               </div>
               <div className="form-group">
                 <label>Pincode</label>
-                <input className="input" name="pincode" value={form.pincode} onChange={handleChange} />
+                <input className="input" name="pincode" value={form.pincode} onChange={handleChange} required />
               </div>
               <button type="submit" className="btn btn-secondary" style={{width:"100%",padding:"14px",fontSize:16}} disabled={loading}>
                 {loading ? <><span className="spinner" /> Placing Order...</> : "Place Order"}
