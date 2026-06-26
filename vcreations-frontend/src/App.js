@@ -70,37 +70,51 @@ function HomeRoute() {
   return userEmail ? <ProductList /> : <Navigate to="/login" replace />;
 }
 
+function AppLayout() {
+  const location = useLocation();
+  const isLogin = location.pathname === "/login";
+  return (
+    <>
+      {!isLogin && (
+        <>
+          <div className="floating-shapes" aria-hidden="true">
+            <div className="floating-shape floating-shape--circle" />
+            <div className="floating-shape floating-shape--square" />
+            <div className="floating-shape floating-shape--triangle" />
+            <div className="floating-shape floating-shape--circle" style={{width:40,height:40,top:"80%",left:"80%"}} />
+            <div className="floating-shape floating-shape--square" style={{width:50,height:50,top:"10%",right:"5%"}} />
+          </div>
+          <div className="sparkles" aria-hidden="true">
+            {[...Array(8)].map((_, i) => <div key={i} className="sparkle" />)}
+          </div>
+          <div className="floating-bg" aria-hidden="true">
+            <div className="floating-blob" />
+            <div className="floating-blob" />
+            <div className="floating-blob" />
+          </div>
+          <Header />
+        </>
+      )}
+      <main className={isLogin ? "" : "container"} style={isLogin ? {position:"relative",zIndex:1} : {position:"relative",zIndex:1,paddingTop:"32px",paddingBottom:"64px"}}>
+        <Routes>
+          <Route path="/" element={<HomeRoute />} />
+          <Route path="/cart" element={<Cart />} />
+          <Route path="/checkout" element={<Checkout />} />
+          <Route path="/admin" element={<AdminDashboard />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/orders" element={<UserOrders />} />
+        </Routes>
+      </main>
+    </>
+  );
+}
+
 function App() {
   return (
     <CartProvider>
       <BrowserRouter>
         <ScrollToTop />
-        <div className="floating-shapes" aria-hidden="true">
-          <div className="floating-shape floating-shape--circle" />
-          <div className="floating-shape floating-shape--square" />
-          <div className="floating-shape floating-shape--triangle" />
-          <div className="floating-shape floating-shape--circle" style={{width:40,height:40,top:"80%",left:"80%"}} />
-          <div className="floating-shape floating-shape--square" style={{width:50,height:50,top:"10%",right:"5%"}} />
-        </div>
-        <div className="sparkles" aria-hidden="true">
-          {[...Array(8)].map((_, i) => <div key={i} className="sparkle" />)}
-        </div>
-        <div className="floating-bg" aria-hidden="true">
-          <div className="floating-blob" />
-          <div className="floating-blob" />
-          <div className="floating-blob" />
-        </div>
-        <Header />
-        <main className="container" style={{position:"relative",zIndex:1,paddingTop:"32px",paddingBottom:"64px"}}>
-          <Routes>
-            <Route path="/" element={<HomeRoute />} />
-            <Route path="/cart" element={<Cart />} />
-            <Route path="/checkout" element={<Checkout />} />
-            <Route path="/admin" element={<AdminDashboard />} />
-            <Route path="/login" element={<Login />} />
-            <Route path="/orders" element={<UserOrders />} />
-          </Routes>
-        </main>
+        <AppLayout />
       </BrowserRouter>
     </CartProvider>
   );
