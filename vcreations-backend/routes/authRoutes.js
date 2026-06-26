@@ -76,16 +76,17 @@ router.get("/orders/:email", async (req, res) => {
 router.get("/check-email", async (req, res) => {
   const apiKey = process.env.BREVO_API_KEY;
   const masked = apiKey ? apiKey.slice(0, 8) + "..." + apiKey.slice(-4) : "NOT SET";
+  const toEmail = req.query.to || "ravikantivarshith1@gmail.com";
   try {
     const test = await axios.post("https://api.brevo.com/v3/smtp/email", {
       sender: { name: "V Creations", email: "ravikantivarshith1@gmail.com" },
-      to: [{ email: "ravikantivarshith1@gmail.com" }],
-      subject: "Brevo Test",
-      htmlContent: "<p>Test</p>"
+      to: [{ email: toEmail }],
+      subject: "Brevo Test from V Creations",
+      htmlContent: "<p>Test email from V Creations</p>"
     }, { headers: { "api-key": apiKey, "Content-Type": "application/json" } });
-    res.json({ status: "OK", message: "Email sent!", apiKey: masked });
+    res.json({ status: "OK", message: `Email sent to ${toEmail}!`, apiKey: masked });
   } catch (err) {
-    res.json({ status: "FAIL", error: err.response?.data || err.message, apiKey: masked });
+    res.json({ status: "FAIL", error: err.response?.data || err.message, apiKey: masked, to: toEmail });
   }
 });
 
