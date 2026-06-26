@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const axios = require("axios");
+const mongoose = require("mongoose");
 const User = require("../models/User");
 const Order = require("../models/Order");
 const Otp = require("../models/Otp");
@@ -44,14 +45,17 @@ router.post("/send-otp", async (req, res) => {
 
   const otp = generateOTP();
 
-  // Store OTP in DB (await with 5s timeout to prevent cold-start hangs)
+  // Store OTP in DB first, then send email
+  if (mongoose.connection.readyState !== 1) {
+    console.error("DB not connected, state:", mongoose.connection.readyState);
+    return res.status(500).json({ error: "Database not ready. Please try again." });
+  }
   try {
-    await Promise.race([
-      Otp.deleteMany({ email }).then(() => new Otp({ email, otp }).save()),
-      new Promise((_, reject) => setTimeout(() => reject(new Error("timeout")), 5000))
-    ]);
+    await Otp.deleteMany({ email });
+    await new Otp({ email, otp }).save();
   } catch (err) {
     console.error("OTP save error:", err.message);
+    return res.status(500).json({ error: "Server error. Please try again." });
   }
 
   const sent = await sendEmailOTP(email, otp);
