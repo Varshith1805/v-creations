@@ -414,9 +414,9 @@
 }
 
 .product-price {
-  font-size: 18px;
-  font-weight: 700;
-  color: #0f1111;
+  font-size: 20px;
+  font-weight: 800;
+  color: #000000;
 }
 
 .product-price-original {
@@ -564,7 +564,7 @@
 
 .cart-item-total { text-align: right; min-width: 80px; }
 
-.cart-item-total .price { font-size: 17px; font-weight: 700; color: #0f1111; }
+.cart-item-total .price { font-size: 18px; font-weight: 800; color: #000; }
 
 .cart-item-actions { display: flex; gap: 6px; margin-top: 6px; justify-content: flex-end; }
 
@@ -619,8 +619,9 @@
   display: flex;
   justify-content: space-between;
   padding: 8px 0;
-  font-size: 14px;
-  color: #222;
+  font-size: 15px;
+  color: #000;
+  font-weight: 500;
 }
 
 .checkout-line.total {
