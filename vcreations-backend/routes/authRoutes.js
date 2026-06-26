@@ -11,7 +11,7 @@ function generateOTP() {
 
 async function sendEmailOTP(toEmail, otp) {
   const apiKey = process.env.BREVO_API_KEY;
-  if (!apiKey) return false;
+  if (!apiKey) { console.error("Brevo: No API key"); return false; }
   try {
     const res = await axios.post("https://api.brevo.com/v3/smtp/email", {
       sender: { name: "V Creations", email: "ravikantivarshith1@gmail.com" },
@@ -26,12 +26,13 @@ async function sendEmailOTP(toEmail, otp) {
         <p style="color:#999;font-size:12px;text-align:center">V Creations - Rakshabandhan Collection</p>
       </div>`
     }, {
-      headers: { "api-key": apiKey }
+      headers: { "api-key": apiKey, "Content-Type": "application/json" }
     });
     console.log("Brevo success:", res.status);
     return true;
   } catch (err) {
-    console.error("Brevo error:", err.response?.data || err.message);
+    const detail = err.response?.data ? JSON.stringify(err.response.data) : err.message;
+    console.error("Brevo error:", detail);
     return false;
   }
 }
@@ -70,6 +71,22 @@ router.post("/verify-otp", async (req, res) => {
 router.get("/orders/:email", async (req, res) => {
   const orders = await Order.find({ email: req.params.email }).sort({ createdAt: -1 });
   res.json(orders);
+});
+
+router.get("/check-email", async (req, res) => {
+  const apiKey = process.env.BREVO_API_KEY;
+  const masked = apiKey ? apiKey.slice(0, 8) + "..." + apiKey.slice(-4) : "NOT SET";
+  try {
+    const test = await axios.post("https://api.brevo.com/v3/smtp/email", {
+      sender: { name: "V Creations", email: "ravikantivarshith1@gmail.com" },
+      to: [{ email: "ravikantivarshith1@gmail.com" }],
+      subject: "Brevo Test",
+      htmlContent: "<p>Test</p>"
+    }, { headers: { "api-key": apiKey, "Content-Type": "application/json" } });
+    res.json({ status: "OK", message: "Email sent!", apiKey: masked });
+  } catch (err) {
+    res.json({ status: "FAIL", error: err.response?.data || err.message, apiKey: masked });
+  }
 });
 
 module.exports = router;
