@@ -44,9 +44,15 @@ router.post("/send-otp", async (req, res) => {
 
   const otp = generateOTP();
 
-  // Store OTP in DB (fire-and-forget with timeout)
-  Otp.deleteMany({ email }).catch(() => {});
-  new Otp({ email, otp }).save().catch(() => {});
+  // Store OTP in DB (await with 5s timeout to prevent cold-start hangs)
+  try {
+    await Promise.race([
+      Otp.deleteMany({ email }).then(() => new Otp({ email, otp }).save()),
+      new Promise((_, reject) => setTimeout(() => reject(new Error("timeout")), 5000))
+    ]);
+  } catch (err) {
+    console.error("OTP save error:", err.message);
+  }
 
   const sent = await sendEmailOTP(email, otp);
   if (!sent) return res.status(500).json({ error: "Failed to send email. Check your email address and try again." });
