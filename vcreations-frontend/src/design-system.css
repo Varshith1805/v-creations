@@ -1,25 +1,25 @@
 :root {
-  /* Colors */
-  --c-primary: #7B1818;
-  --c-primary-light: #A52A2A;
-  --c-primary-dark: #4A0E0E;
-  --c-accent: #FFD700;
-  --c-accent-light: #FFE44D;
-  --c-accent-dark: #DAA520;
+  /* Colors — Premium Rakshabandhan Theme */
+  --c-primary: #8B1A1A;
+  --c-primary-light: #B22222;
+  --c-primary-dark: #5C0E0E;
+  --c-accent: #FFC107;
+  --c-accent-light: #FFD54F;
+  --c-accent-dark: #FF8F00;
   --c-coral: #E85D75;
   --c-coral-light: #FF8FA3;
-  --c-teal: #2ec4b6;
+  --c-teal: #26a69a;
   --c-teal-light: #4dd8cc;
-  --c-cream: #faf3e0;
-  --c-cream-dark: #f0e6c8;
+  --c-cream: #FFF8E7;
+  --c-cream-dark: #FFEBC2;
   --c-white: #ffffff;
-  --c-bg: #f8f6f2;
+  --c-bg: #FFFBF5;
   --c-surface: #ffffff;
-  --c-text: #1a1a2e;
-  --c-text-secondary: #6b7280;
-  --c-text-light: #9ca3af;
-  --c-border: #e5e7eb;
-  --c-border-light: #f3f4f6;
+  --c-text: #1C0E0E;
+  --c-text-secondary: #6b4f4f;
+  --c-text-light: #a08080;
+  --c-border: #E8D5C4;
+  --c-border-light: #F5EDE4;
   --c-success: #10b981;
   --c-warning: #f59e0b;
   --c-error: #ef4444;
