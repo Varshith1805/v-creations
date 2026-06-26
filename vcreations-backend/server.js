@@ -51,11 +51,13 @@ const productRoutes = require("./routes/productRoutes");
 const adminRoutes = require("./routes/adminRoutes");
 const orderRoutes = require("./routes/orderRoutes");
 const authRoutes = require("./routes/authRoutes");
+const cartRoutes = require("./routes/cartRoutes");
 
 app.use("/products", productRoutes);
 app.use("/admin", adminRoutes);
 app.use("/orders", orderRoutes);
 app.use("/auth", authRoutes);
+app.use("/cart", cartRoutes);
 
 const frontendBuild = path.join(__dirname, "..", "vcreations-frontend", "build");
 app.use(express.static(frontendBuild));
