@@ -82,13 +82,26 @@ export default function AdminDashboard() {
           </h3>
           <ul className="admin-list">
             {orders.map(o => (
-              <li key={o._id} style={newOrderAlert?._id === o._id ? { background: "rgba(255,215,0,0.15)", borderRadius: 6, fontWeight: 600 } : undefined}>
-                <div>
-                  <strong>{o.customerName}</strong>
-                  {o.address && <div style={{fontSize:12,color:"var(--c-text-light)",marginTop:2}}>{o.address}</div>}
-                  {(o.pincode || o.phone) && <div style={{fontSize:12,color:"var(--c-text-light)",marginTop:1}}>{o.pincode ? `Pincode: ${o.pincode}` : ""}{o.phone ? ` · ${o.phone}` : ""}</div>}
+              <li key={o._id} style={{ display: "flex", flexDirection: "column", gap: 4, ...(newOrderAlert?._id === o._id ? { background: "rgba(255,215,0,0.15)", borderRadius: 6, fontWeight: 600 } : {}) }}>
+                <div style={{ display: "flex", justifyContent: "space-between", width: "100%" }}>
+                  <div>
+                    <strong>{o.customerName}</strong>
+                    <span style={{ marginLeft: 8, fontSize: 11, fontWeight: 600, color: o.status === "completed" ? "#007600" : "#c77000" }}>({o.status})</span>
+                    {o.address && <div style={{fontSize:12,color:"var(--c-text-light)",marginTop:2}}>{o.address}</div>}
+                    {(o.pincode || o.phone) && <div style={{fontSize:12,color:"var(--c-text-light)",marginTop:1}}>{o.pincode ? `Pincode: ${o.pincode}` : ""}{o.phone ? ` · ${o.phone}` : ""}</div>}
+                  </div>
+                  <div style={{ textAlign: "right" }}>
+                    <div>₹{o.totalAmount} · {new Date(o.createdAt).toLocaleTimeString()}</div>
+                    {o.status !== "completed" && (
+                      <button className="btn" style={{ fontSize: 11, padding: "2px 8px", marginTop: 4, background: "#007600", color: "white", border: "none" }}
+                        onClick={async () => {
+                          try { await axios.patch(`/admin/orders/${o._id}`, { status: "completed" }); } catch {}
+                        }}>
+                        ✓ Mark Complete
+                      </button>
+                    )}
+                  </div>
                 </div>
-                <span>₹{o.totalAmount} · {new Date(o.createdAt).toLocaleTimeString()}</span>
               </li>
             ))}
             {orders.length === 0 && <li style={{ color: "var(--c-text-light)", fontStyle: "italic" }}>No orders yet</li>}
