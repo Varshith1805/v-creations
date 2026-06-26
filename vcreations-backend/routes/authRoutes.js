@@ -3,13 +3,7 @@ const router = express.Router();
 const axios = require("axios");
 const User = require("../models/User");
 const Order = require("../models/Order");
-
-const otpStore = new Map();
-setInterval(() => {
-  for (const [email, data] of otpStore) {
-    if (data.expires < Date.now()) otpStore.delete(email);
-  }
-}, 600000);
+const Otp = require("../models/Otp");
 
 function generateOTP() {
   return Math.floor(1000 + Math.random() * 9000).toString();
@@ -47,7 +41,8 @@ router.post("/send-otp", async (req, res) => {
   if (!email) return res.status(400).json({ error: "Email required" });
 
   const otp = generateOTP();
-  otpStore.set(email, { otp, expires: Date.now() + 300000 });
+  await Otp.deleteMany({ email });
+  await new Otp({ email, otp }).save();
 
   const sent = await sendEmailOTP(email, otp);
   res.json({ message: sent ? "OTP sent to email" : "OTP generated", dev: otp });
@@ -57,15 +52,10 @@ router.post("/verify-otp", async (req, res) => {
   const { email, otp } = req.body;
   if (!email || !otp) return res.status(400).json({ error: "Email and OTP required" });
 
-  const data = otpStore.get(email);
-  if (!data) return res.status(400).json({ error: "No OTP requested" });
-  if (data.expires < Date.now()) {
-    otpStore.delete(email);
-    return res.status(400).json({ error: "OTP expired" });
-  }
-  if (data.otp !== otp) return res.status(400).json({ error: "Invalid OTP" });
+  const record = await Otp.findOne({ email, otp });
+  if (!record) return res.status(400).json({ error: "Invalid or expired OTP" });
 
-  otpStore.delete(email);
+  await Otp.deleteMany({ email });
   let user = await User.findOne({ email });
   if (!user) user = await new User({ email }).save();
 
