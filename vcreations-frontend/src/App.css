@@ -581,8 +581,8 @@
 
 .btn-offer { color: var(--c-primary); border: 2px solid var(--c-accent-dark) !important; background: var(--c-cream) !important; font-weight: 700 !important; }
 .btn-offer:hover { background: var(--c-cream-dark) !important; }
-.btn-remove { color: var(--c-error); border: 1px solid #f5c6c6 !important; font-weight: 600; }
-.btn-remove:hover { background: #fdf0f0; }
+.btn-remove { color: #D32F2F; border: 1px solid #D32F2F !important; font-weight: 600; background: white !important; }
+.btn-remove:hover { background: #FFF0F0 !important; }
 
 .cart-empty {
   text-align: center;
