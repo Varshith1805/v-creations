@@ -1,28 +1,28 @@
 :root {
-  /* Colors — Amazon/Flipkart Light Theme */
-  --c-primary: #131921;
-  --c-primary-light: #232F3E;
-  --c-primary-dark: #0A1116;
+  /* Colors — Ultra Bright Theme */
+  --c-primary: #2874F0;
+  --c-primary-light: #4A8DF5;
+  --c-primary-dark: #1A5DC7;
   --c-accent: #FFD814;
   --c-accent-light: #FFE44D;
   --c-accent-dark: #F7CA00;
-  --c-coral: #E85D75;
+  --c-coral: #FF6F91;
   --c-coral-light: #FF8FA3;
-  --c-teal: #26a69a;
+  --c-teal: #00D2D3;
   --c-teal-light: #4dd8cc;
   --c-cream: #FFF8E7;
   --c-cream-dark: #FFEBC2;
   --c-white: #ffffff;
-  --c-bg: #F0F2F2;
+  --c-bg: #FFFFFF;
   --c-surface: #ffffff;
-  --c-text: #0F1111;
-  --c-text-secondary: #565959;
+  --c-text: #212121;
+  --c-text-secondary: #666666;
   --c-text-light: #999999;
-  --c-border: #D5D9D9;
-  --c-border-light: #EAECEE;
-  --c-success: #067D62;
-  --c-warning: #F69931;
-  --c-error: #D00E17;
+  --c-border: #E0E0E0;
+  --c-border-light: #F5F5F5;
+  --c-success: #388E3C;
+  --c-warning: #F57C00;
+  --c-error: #D32F2F;
 
   /* Spacing */
   --space-1: 4px;
