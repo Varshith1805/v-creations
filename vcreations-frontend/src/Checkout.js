@@ -69,7 +69,7 @@ export default function Checkout() {
 
   return (
     <div className="checkout-page">
-      <h2>Checkout</h2>
+      <h2 style={{color:"var(--c-primary)"}}>Checkout</h2>
       <div className="checkout-layout">
         <div>
           <div className="checkout-summary" style={{marginBottom:24}}>

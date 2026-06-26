@@ -67,7 +67,7 @@ export default function Cart() {
           }}>Apply</button>
         </div>
       )}
-      <h2>Shopping Cart ({items.length} {items.length === 1 ? "item" : "items"})</h2>
+      <h2 style={{color:"var(--c-primary)"}}>Shopping Cart ({items.length} {items.length === 1 ? "item" : "items"})</h2>
       <div className="cart-items">
         {items.map(({ product, quantity }) => {
           const info = appliedOffers[product._id];
