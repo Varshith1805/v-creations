@@ -13,6 +13,10 @@ app.get("/health", (req, res) => {
   res.status(200).json({ status: "ok" });
 });
 
+let dbReady = false;
+let dbReadyResolve;
+const dbReadyPromise = new Promise(r => { dbReadyResolve = r; });
+
 async function connectDB() {
   try {
     if (process.env.MONGO_URI) {
@@ -29,7 +33,19 @@ async function connectDB() {
     console.error("MongoDB connection error:", err.message);
     console.log("Server will continue without database - API routes will return errors");
   }
+  dbReady = true;
+  if (dbReadyResolve) dbReadyResolve();
 }
+
+// Wait for DB before processing requests
+app.use(async (req, res, next) => {
+  if (!dbReady) {
+    try {
+      await Promise.race([dbReadyPromise, new Promise(r => setTimeout(r, 10000))]);
+    } catch (_) {}
+  }
+  next();
+});
 
 const productRoutes = require("./routes/productRoutes");
 const adminRoutes = require("./routes/adminRoutes");
