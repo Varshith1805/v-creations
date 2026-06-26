@@ -1,11 +1,11 @@
 :root {
-  /* Colors — Premium Rakshabandhan Theme */
-  --c-primary: #8B1A1A;
-  --c-primary-light: #B22222;
-  --c-primary-dark: #5C0E0E;
-  --c-accent: #FFC107;
-  --c-accent-light: #FFD54F;
-  --c-accent-dark: #FF8F00;
+  /* Colors — Amazon/Flipkart Light Theme */
+  --c-primary: #131921;
+  --c-primary-light: #232F3E;
+  --c-primary-dark: #0A1116;
+  --c-accent: #FFD814;
+  --c-accent-light: #FFE44D;
+  --c-accent-dark: #F7CA00;
   --c-coral: #E85D75;
   --c-coral-light: #FF8FA3;
   --c-teal: #26a69a;
@@ -13,16 +13,16 @@
   --c-cream: #FFF8E7;
   --c-cream-dark: #FFEBC2;
   --c-white: #ffffff;
-  --c-bg: #FFFBF5;
+  --c-bg: #F0F2F2;
   --c-surface: #ffffff;
-  --c-text: #1C0E0E;
-  --c-text-secondary: #6b4f4f;
-  --c-text-light: #a08080;
-  --c-border: #E8D5C4;
-  --c-border-light: #F5EDE4;
-  --c-success: #10b981;
-  --c-warning: #f59e0b;
-  --c-error: #ef4444;
+  --c-text: #0F1111;
+  --c-text-secondary: #565959;
+  --c-text-light: #999999;
+  --c-border: #D5D9D9;
+  --c-border-light: #EAECEE;
+  --c-success: #067D62;
+  --c-warning: #F69931;
+  --c-error: #D00E17;
 
   /* Spacing */
   --space-1: 4px;
