@@ -43,13 +43,25 @@ router.post("/send-otp", async (req, res) => {
   if (!email) return res.status(400).json({ error: "Email required" });
 
   const otp = generateOTP();
+
+  // Store OTP in DB (fire-and-forget with timeout)
+  Otp.deleteMany({ email }).catch(() => {});
+  new Otp({ email, otp }).save().catch(() => {});
+
   const sent = await sendEmailOTP(email, otp);
-  res.json({ message: sent ? "OTP sent to email" : "OTP generated", dev: otp });
+  if (!sent) return res.status(500).json({ error: "Failed to send email. Check your email address and try again." });
+
+  res.json({ message: "OTP sent to email" });
 });
 
 router.post("/verify-otp", async (req, res) => {
-  const { email, name } = req.body;
-  if (!email) return res.status(400).json({ error: "Email required" });
+  const { email, otp, name } = req.body;
+  if (!email || !otp) return res.status(400).json({ error: "Email and OTP required" });
+
+  const record = await Otp.findOne({ email, otp });
+  if (!record) return res.status(400).json({ error: "Invalid or expired OTP" });
+
+  await Otp.deleteMany({ email });
 
   let user = await User.findOne({ email });
   if (!user) {

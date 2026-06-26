@@ -9,7 +9,6 @@ export default function Login() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [otp, setOtp] = useState("");
-  const [devOtp, setDevOtp] = useState("");
   const [step, setStep] = useState("email");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -19,8 +18,7 @@ export default function Login() {
     setLoading(true);
     setError("");
     try {
-      const res = await axios.post("/auth/send-otp", { email });
-      setDevOtp(res.data.dev || "");
+      await axios.post("/auth/send-otp", { email });
       setStep("otp");
     } catch (err) {
       setError(err.response?.data?.error || "Failed to send OTP");
@@ -33,18 +31,15 @@ export default function Login() {
     if (otp.length < 4) return setError("Enter the OTP");
     setLoading(true);
     setError("");
-
-    // Check against the OTP shown on screen
-    if (devOtp && otp !== devOtp) {
-      setError("Incorrect OTP");
+    try {
+      const res = await axios.post("/auth/verify-otp", { email, otp, name });
+      login(res.data.email, res.data.name || name);
+      navigate("/orders");
+    } catch (err) {
+      setError(err.response?.data?.error || "Invalid OTP");
+    } finally {
       setLoading(false);
-      return;
     }
-
-    // Login locally immediately, then save user in background
-    login(email, name);
-    axios.post("/auth/verify-otp", { email, name }).catch(() => {});
-    navigate("/orders");
   };
 
   return (
@@ -82,7 +77,6 @@ export default function Login() {
                 value={otp} onChange={e => setOtp(e.target.value.replace(/\D/g, ""))}
                 style={{ textAlign: "center", fontSize: 22, letterSpacing: 8, fontWeight: 700 }} />
             </div>
-            {devOtp && <p style={{ background: "#fef5e7", padding: "8px 12px", borderRadius: 4, fontSize: 13, marginBottom: 12, color: "var(--c-primary)" }}>Your OTP is: <strong>{devOtp}</strong> <span style={{ color: "#999" }}>(Email not delivered — enter this OTP)</span></p>}
             <button className="btn btn-secondary" style={{ width: "100%", padding: 12, fontSize: 15 }}
               onClick={verifyOtp} disabled={loading}>
               {loading ? "Verifying..." : "Verify OTP"}
