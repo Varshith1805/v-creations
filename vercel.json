@@ -5,7 +5,7 @@
     { "src": "vcreations-frontend/build/**", "use": "@vercel/static" }
   ],
   "routes": [
-    { "src": "/(products|admin|orders|auth|health)(/.*)?", "dest": "api/index.js" },
+    { "src": "/(products|admin|orders|auth|health|cart)(/.*)?", "dest": "api/index.js" },
     { "src": "/static/(.*)", "dest": "vcreations-frontend/build/static/$1" },
     { "src": "/favicon\\.ico", "dest": "vcreations-frontend/build/favicon.ico" },
     { "src": "/manifest\\.json", "dest": "vcreations-frontend/build/manifest.json" },

@@ -1,7 +1,8 @@
-import React, { createContext, useContext, useState, useEffect, useCallback, useRef } from "react";
+import React, { createContext, useContext, useState, useEffect, useCallback } from "react";
 import axios from "axios";
 
 const CartContext = createContext();
+let saveTimer = null;
 
 export function CartProvider({ children }) {
   const [items, setItems] = useState([]);
@@ -34,41 +35,52 @@ export function CartProvider({ children }) {
     axios.get(`/cart/${encodeURIComponent(userEmail)}`)
       .then(res => {
         const data = res.data;
-        setItems(data.items || []);
-        setAppliedOffers(data.appliedOffers || {});
+        if (data.items && data.items.length) {
+          setItems(data.items);
+          setAppliedOffers(data.appliedOffers || {});
+        }
       })
       .catch(() => {})
       .finally(() => setCartLoaded(true));
   }, [userEmail]);
 
-  const saveCartToBackend = useCallback((currentItems, currentOffers) => {
+  const scheduleSave = useCallback((newItems, newOffers) => {
     if (!userEmail) return;
-    axios.put(`/cart/${encodeURIComponent(userEmail)}`, {
-      items: currentItems,
-      appliedOffers: currentOffers
-    }).catch(() => {});
+    if (saveTimer) clearTimeout(saveTimer);
+    saveTimer = setTimeout(() => {
+      axios.put(`/cart/${encodeURIComponent(userEmail)}`, {
+        items: newItems,
+        appliedOffers: newOffers
+      }).catch(() => {});
+    }, 300);
   }, [userEmail]);
 
   const addToCart = (product, quantity = 1) => {
     setItems(prev => {
       const existing = prev.find(item => item.product._id === product._id);
+      let newItems;
       if (existing) {
-        return prev.map(item =>
+        newItems = prev.map(item =>
           item.product._id === product._id
             ? { ...item, quantity: item.quantity + quantity }
             : item
         );
+      } else {
+        newItems = [...prev, { product, quantity }];
       }
-      return [...prev, { product, quantity }];
+      scheduleSave(newItems, appliedOffers);
+      return newItems;
     });
   };
 
   const removeFromCart = (productId) => {
-    setItems(prev => prev.filter(item => item.product._id !== productId));
-    setAppliedOffers(prev => {
-      const n = { ...prev };
-      delete n[productId];
-      return n;
+    setItems(prev => {
+      const newItems = prev.filter(item => item.product._id !== productId);
+      const newOffers = { ...appliedOffers };
+      delete newOffers[productId];
+      setAppliedOffers(newOffers);
+      scheduleSave(newItems, newOffers);
+      return newItems;
     });
   };
 
@@ -77,15 +89,15 @@ export function CartProvider({ children }) {
       removeFromCart(productId);
       return;
     }
-    setItems(prev =>
-      prev.map(item =>
+    setItems(prev => {
+      const newItems = prev.map(item =>
         item.product._id === productId ? { ...item, quantity } : item
-      )
-    );
-    setAppliedOffers(prev => {
-      const n = { ...prev };
-      delete n[productId];
-      return n;
+      );
+      const newOffers = { ...appliedOffers };
+      delete newOffers[productId];
+      setAppliedOffers(newOffers);
+      scheduleSave(newItems, newOffers);
+      return newItems;
     });
   };
 
@@ -98,24 +110,12 @@ export function CartProvider({ children }) {
   };
 
   const applyOffer = (productId, offerData) => {
-    setAppliedOffers(prev => ({ ...prev, [productId]: offerData }));
+    setAppliedOffers(prev => {
+      const newOffers = { ...prev, [productId]: offerData };
+      scheduleSave(items, newOffers);
+      return newOffers;
+    });
   };
-
-  // Sync to backend after state changes
-  const prevItemsRef = useRef(items);
-  const prevOffersRef = useRef(appliedOffers);
-  useEffect(() => {
-    if (!cartLoaded || !userEmail) {
-      prevItemsRef.current = items;
-      prevOffersRef.current = appliedOffers;
-      return;
-    }
-    if (prevItemsRef.current !== items || prevOffersRef.current !== appliedOffers) {
-      prevItemsRef.current = items;
-      prevOffersRef.current = appliedOffers;
-      saveCartToBackend(items, appliedOffers);
-    }
-  }, [items, appliedOffers, cartLoaded, userEmail, saveCartToBackend]);
 
   return (
     <CartContext.Provider value={{ items, appliedOffers, userEmail, userName, cartLoaded, addToCart, removeFromCart, updateQuantity, clearCart, applyOffer, login, logout }}>
