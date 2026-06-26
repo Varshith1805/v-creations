@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { BrowserRouter, Routes, Route, Link, useLocation } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Link, useLocation, Navigate } from "react-router-dom";
 import { CartProvider, useCart } from "./CartContext";
 
 import ProductList from "./ProductList";
@@ -65,6 +65,11 @@ function Header() {
   );
 }
 
+function HomeRoute() {
+  const { userEmail } = useCart();
+  return userEmail ? <ProductList /> : <Navigate to="/login" replace />;
+}
+
 function App() {
   return (
     <CartProvider>
@@ -88,7 +93,7 @@ function App() {
         <Header />
         <main className="container" style={{position:"relative",zIndex:1,paddingTop:"32px",paddingBottom:"64px"}}>
           <Routes>
-            <Route path="/" element={<ProductList />} />
+            <Route path="/" element={<HomeRoute />} />
             <Route path="/cart" element={<Cart />} />
             <Route path="/checkout" element={<Checkout />} />
             <Route path="/admin" element={<AdminDashboard />} />
