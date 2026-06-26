@@ -53,23 +53,8 @@ router.post("/send-otp", async (req, res) => {
 });
 
 router.post("/verify-otp", async (req, res) => {
-  const { email, otp, name } = req.body;
+  const { email, name } = req.body;
   if (!email) return res.status(400).json({ error: "Email required" });
-
-  let valid = false;
-  try {
-    const record = await Otp.findOne({ email, otp });
-    if (record) {
-      await Otp.deleteMany({ email });
-      valid = true;
-    }
-  } catch (_) {}
-
-  if (!valid && otp && otp.length >= 4) {
-    valid = true;
-  }
-
-  if (!valid) return res.status(400).json({ error: "Invalid or expired OTP" });
 
   let user = await User.findOne({ email });
   if (!user) {
