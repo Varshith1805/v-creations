@@ -26,7 +26,8 @@ async function sendEmailOTP(toEmail, otp) {
         <p style="color:#999;font-size:12px;text-align:center">V Creations - Rakshabandhan Collection</p>
       </div>`
     }, {
-      headers: { "api-key": apiKey, "Content-Type": "application/json" }
+      headers: { "api-key": apiKey, "Content-Type": "application/json" },
+      timeout: 8000
     });
     console.log("Brevo success:", res.status);
     return true;
@@ -42,13 +43,6 @@ router.post("/send-otp", async (req, res) => {
   if (!email) return res.status(400).json({ error: "Email required" });
 
   const otp = generateOTP();
-  try {
-    await Otp.deleteMany({ email });
-    await new Otp({ email, otp }).save();
-  } catch (err) {
-    console.error("OTP save error:", err.message);
-  }
-
   const sent = await sendEmailOTP(email, otp);
   res.json({ message: sent ? "OTP sent to email" : "OTP generated", dev: otp });
 });

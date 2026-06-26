@@ -17,10 +17,18 @@ let dbReady = false;
 let dbReadyResolve;
 const dbReadyPromise = new Promise(r => { dbReadyResolve = r; });
 
+mongoose.set("bufferTimeoutMS", 10000);
+mongoose.connection.on("disconnected", () => { console.log("Mongoose disconnected"); });
+mongoose.connection.on("error", err => { console.error("Mongoose error:", err.message); });
+mongoose.connection.on("reconnected", () => { console.log("Mongoose reconnected"); });
+
 async function connectDB() {
   try {
     if (process.env.MONGO_URI) {
-      await mongoose.connect(process.env.MONGO_URI);
+      await mongoose.connect(process.env.MONGO_URI, {
+        serverSelectionTimeoutMS: 5000,
+        socketTimeoutMS: 45000
+      });
       console.log("MongoDB connected:", process.env.MONGO_URI);
     } else {
       const { MongoMemoryServer } = require("mongodb-memory-server");
