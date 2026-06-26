@@ -60,6 +60,10 @@ router.post("/verify-otp", async (req, res) => {
 
   const record = await Otp.findOne({ email, otp });
   if (!record) return res.status(400).json({ error: "Invalid or expired OTP" });
+  if (Date.now() - new Date(record.createdAt).getTime() > 300000) {
+    await Otp.deleteMany({ email });
+    return res.status(400).json({ error: "OTP expired" });
+  }
 
   await Otp.deleteMany({ email });
 
