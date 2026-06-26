@@ -50,8 +50,14 @@ app.use((req, res) => {
 process.on("uncaughtException", err => console.error("UNCAUGHT:", err));
 process.on("unhandledRejection", err => console.error("UNHANDLED:", err));
 
-const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
+if (!process.env.VERCEL) {
+  const PORT = process.env.PORT || 5000;
+  app.listen(PORT, () => {
+    console.log(`Server running on port ${PORT}`);
+    connectDB();
+  });
+} else {
   connectDB();
-});
+}
+
+module.exports = app;
