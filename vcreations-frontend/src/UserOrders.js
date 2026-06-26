@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 import { useCart } from "./CartContext";
 
 export default function UserOrders() {
-  const { userEmail, logout } = useCart();
+  const { userEmail, userName, logout } = useCart();
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -28,7 +28,10 @@ export default function UserOrders() {
   return (
     <div className="cart-page">
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 20 }}>
-        <h2>My Orders</h2>
+        <div>
+          {userName && <p style={{ fontSize: 14, color: "#666", margin: 0 }}>Welcome, <strong style={{ color: "#111" }}>{userName}</strong></p>}
+          <h2 style={{ margin: 0 }}>My Orders</h2>
+        </div>
         <button className="btn btn-ghost" onClick={logout} style={{ fontSize: 12 }}>Sign Out</button>
       </div>
 

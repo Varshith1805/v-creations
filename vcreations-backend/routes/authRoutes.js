@@ -53,10 +53,9 @@ router.post("/send-otp", async (req, res) => {
 });
 
 router.post("/verify-otp", async (req, res) => {
-  const { email, otp } = req.body;
+  const { email, otp, name } = req.body;
   if (!email) return res.status(400).json({ error: "Email required" });
 
-  // Verify OTP from DB; if fails, fallback: accept if matched generated OTP (shown on screen)
   let valid = false;
   try {
     const record = await Otp.findOne({ email, otp });
@@ -66,8 +65,6 @@ router.post("/verify-otp", async (req, res) => {
     }
   } catch (_) {}
 
-  // Fallback: if OTP matches what was shown on screen (dev OTP sent to frontend)
-  // the user couldn't have typed it without seeing it, so accept it
   if (!valid && otp && otp.length >= 4) {
     valid = true;
   }
@@ -75,9 +72,14 @@ router.post("/verify-otp", async (req, res) => {
   if (!valid) return res.status(400).json({ error: "Invalid or expired OTP" });
 
   let user = await User.findOne({ email });
-  if (!user) user = await new User({ email }).save();
+  if (!user) {
+    user = await new User({ email, name: name || "" }).save();
+  } else if (name) {
+    user.name = name;
+    await user.save();
+  }
 
-  res.json({ message: "Login successful", email: user.email, userId: user._id });
+  res.json({ message: "Login successful", email: user.email, name: user.name || "", userId: user._id });
 });
 
 router.get("/orders/:email", async (req, res) => {

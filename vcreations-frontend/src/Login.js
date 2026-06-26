@@ -6,6 +6,7 @@ import { useCart } from "./CartContext";
 export default function Login() {
   const { login } = useCart();
   const navigate = useNavigate();
+  const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [otp, setOtp] = useState("");
   const [devOtp, setDevOtp] = useState("");
@@ -33,8 +34,8 @@ export default function Login() {
     setLoading(true);
     setError("");
     try {
-      const res = await axios.post("/auth/verify-otp", { email, otp });
-      login(res.data.email);
+      const res = await axios.post("/auth/verify-otp", { email, otp, name });
+      login(res.data.email, res.data.name || name);
       navigate("/orders");
     } catch (err) {
       setError(err.response?.data?.error || "Invalid OTP");
@@ -55,6 +56,11 @@ export default function Login() {
 
         {step === "email" ? (
           <>
+            <div className="form-group" style={{ textAlign: "left" }}>
+              <label>Name</label>
+              <input className="input" type="text" placeholder="Your name"
+                value={name} onChange={e => setName(e.target.value)} />
+            </div>
             <div className="form-group" style={{ textAlign: "left" }}>
               <label>Email</label>
               <input className="input" type="email" placeholder="you@example.com"
