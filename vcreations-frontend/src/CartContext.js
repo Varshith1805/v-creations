@@ -1,8 +1,7 @@
-import React, { createContext, useContext, useState, useEffect, useCallback } from "react";
+import React, { createContext, useContext, useState, useEffect, useRef } from "react";
 import axios from "axios";
 
 const CartContext = createContext();
-let saveTimer = null;
 
 export function CartProvider({ children }) {
   const [items, setItems] = useState([]);
@@ -10,6 +9,8 @@ export function CartProvider({ children }) {
   const [userEmail, setUserEmail] = useState(localStorage.getItem("vc_user_email") || "");
   const [userName, setUserName] = useState(localStorage.getItem("vc_user_name") || "");
   const [cartLoaded, setCartLoaded] = useState(false);
+  const saveTimer = useRef(null);
+  const isFirstLoad = useRef(true);
 
   const login = (email, name = "") => {
     setUserEmail(email);
@@ -44,43 +45,40 @@ export function CartProvider({ children }) {
       .finally(() => setCartLoaded(true));
   }, [userEmail]);
 
-  const scheduleSave = useCallback((newItems, newOffers) => {
-    if (!userEmail) return;
-    if (saveTimer) clearTimeout(saveTimer);
-    saveTimer = setTimeout(() => {
+  // Sync items to backend whenever they change (debounced)
+  useEffect(() => {
+    if (!userEmail || !cartLoaded) return;
+    if (isFirstLoad.current) { isFirstLoad.current = false; return; }
+    if (saveTimer.current) clearTimeout(saveTimer.current);
+    saveTimer.current = setTimeout(() => {
       axios.put(`/cart/${encodeURIComponent(userEmail)}`, {
-        items: newItems,
-        appliedOffers: newOffers
+        items,
+        appliedOffers
       }).catch(() => {});
-    }, 300);
-  }, [userEmail]);
+    }, 400);
+    return () => { if (saveTimer.current) clearTimeout(saveTimer.current); };
+  }, [items, appliedOffers, userEmail, cartLoaded]);
 
   const addToCart = (product, quantity = 1) => {
     setItems(prev => {
       const existing = prev.find(item => item.product._id === product._id);
-      let newItems;
       if (existing) {
-        newItems = prev.map(item =>
+        return prev.map(item =>
           item.product._id === product._id
             ? { ...item, quantity: item.quantity + quantity }
             : item
         );
-      } else {
-        newItems = [...prev, { product, quantity }];
       }
-      scheduleSave(newItems, appliedOffers);
-      return newItems;
+      return [...prev, { product, quantity }];
     });
   };
 
   const removeFromCart = (productId) => {
-    setItems(prev => {
-      const newItems = prev.filter(item => item.product._id !== productId);
-      const newOffers = { ...appliedOffers };
-      delete newOffers[productId];
-      setAppliedOffers(newOffers);
-      scheduleSave(newItems, newOffers);
-      return newItems;
+    setItems(prev => prev.filter(item => item.product._id !== productId));
+    setAppliedOffers(prev => {
+      const n = { ...prev };
+      delete n[productId];
+      return n;
     });
   };
 
@@ -89,15 +87,15 @@ export function CartProvider({ children }) {
       removeFromCart(productId);
       return;
     }
-    setItems(prev => {
-      const newItems = prev.map(item =>
+    setItems(prev =>
+      prev.map(item =>
         item.product._id === productId ? { ...item, quantity } : item
-      );
-      const newOffers = { ...appliedOffers };
-      delete newOffers[productId];
-      setAppliedOffers(newOffers);
-      scheduleSave(newItems, newOffers);
-      return newItems;
+      )
+    );
+    setAppliedOffers(prev => {
+      const n = { ...prev };
+      delete n[productId];
+      return n;
     });
   };
 
@@ -110,11 +108,7 @@ export function CartProvider({ children }) {
   };
 
   const applyOffer = (productId, offerData) => {
-    setAppliedOffers(prev => {
-      const newOffers = { ...prev, [productId]: offerData };
-      scheduleSave(items, newOffers);
-      return newOffers;
-    });
+    setAppliedOffers(prev => ({ ...prev, [productId]: offerData }));
   };
 
   return (
