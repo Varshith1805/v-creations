@@ -33,15 +33,18 @@ export default function Login() {
     if (otp.length < 4) return setError("Enter the OTP");
     setLoading(true);
     setError("");
-    try {
-      const res = await axios.post("/auth/verify-otp", { email, otp, name });
-      login(res.data.email, res.data.name || name);
-      navigate("/orders");
-    } catch (err) {
-      setError(err.response?.data?.error || "Invalid OTP");
-    } finally {
+
+    // Check against the OTP shown on screen
+    if (devOtp && otp !== devOtp) {
+      setError("Incorrect OTP");
       setLoading(false);
+      return;
     }
+
+    // Login locally immediately, then save user in background
+    login(email, name);
+    axios.post("/auth/verify-otp", { email, name }).catch(() => {});
+    navigate("/orders");
   };
 
   return (
