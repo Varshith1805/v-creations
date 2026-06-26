@@ -55,7 +55,11 @@ export default function UserOrders() {
                 {o.products.map(p => `${p.name} x${p.quantity}`).join(", ")}
               </div>
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                <span style={{ fontSize: 13, color: "#444" }}>{o.phone} · {o.address}, {o.pincode}</span>
+                <div>
+                  {o.phone && <span style={{ fontSize: 13, color: "#444" }}>{o.phone}</span>}
+                  {o.address && <div style={{ fontSize: 12, color: "#666", marginTop: 2 }}>{o.address}</div>}
+                  {o.pincode && <div style={{ fontSize: 12, color: "#888", marginTop: 1 }}>Pincode: {o.pincode}</div>}
+                </div>
                 <span style={{ fontSize: 20, fontWeight: 800, color: "var(--c-primary)" }}>₹{o.totalAmount}</span>
               </div>
             </div>
