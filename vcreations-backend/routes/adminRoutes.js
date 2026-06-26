@@ -5,7 +5,7 @@ const fs = require("fs");
 const ExcelJS = require("exceljs");
 const Product = require("../models/Product");
 const Order = require("../models/Order");
-const { generateCatalog, CATALOG_PATH } = require("../utils/generateCatalog");
+const { generateCatalog } = require("../utils/generateCatalog");
 
 // View all products
 router.get("/products", async (req, res) => {
@@ -76,13 +76,13 @@ router.get("/download-excel", async (req, res) => {
   }
 });
 
-// Generate & Download Catalog PDF
+// Generate & Download Catalog PDF (live from DB, no temp file)
 router.get("/download-catalog", async (req, res) => {
   try {
-    await generateCatalog();
-    res.download(CATALOG_PATH, "V_Creations_Catalog.pdf", err => {
-      if (err) res.status(500).json({ error: "Failed to download catalog" });
-    });
+    const pdf = await generateCatalog();
+    res.setHeader("Content-Type", "application/pdf");
+    res.setHeader("Content-Disposition", "attachment; filename=V_Creations_Catalog.pdf");
+    res.send(pdf);
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
