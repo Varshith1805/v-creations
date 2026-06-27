@@ -33,12 +33,10 @@ export default function ProductList() {
   const [search, setSearch] = useState("");
   const [sort, setSort] = useState("default");
   const [category, setCategory] = useState("All");
-  const [page, setPage] = useState(1);
   const [loading, setLoading] = useState(true);
   const [toastMsg, setToastMsg] = useState("");
   const [toastShow, setToastShow] = useState(false);
   const { addToCart } = useCart();
-  const perPage = 8;
 
   useEffect(() => {
     setLoading(true);
@@ -66,8 +64,6 @@ export default function ProductList() {
   if (sort === "price-asc") filtered.sort((a, b) => a.price - b.price);
   if (sort === "price-desc") filtered.sort((a, b) => b.price - a.price);
 
-  const displayed = filtered.slice(0, page * perPage);
-  const hasMore = displayed.length < filtered.length;
   const categories = ["All", "Designer Rakhis", "Silver Rakhis", "Gold Rakhis", "Kids Rakhis", "Premium Rakhis"];
 
   const SkeletonCard = () => (
@@ -98,7 +94,7 @@ export default function ProductList() {
 
       <div className="categories">
         {categories.map(c => (
-          <span key={c} className={`cat-chip ${category === c ? "active" : ""}`} onClick={() => { setCategory(c); setPage(1); }}>{c}</span>
+          <span key={c} className={`cat-chip ${category === c ? "active" : ""}`} onClick={() => setCategory(c)}>{c}</span>
         ))}
       </div>
 
@@ -107,7 +103,7 @@ export default function ProductList() {
         <div className="search-filter">
           <div className="search-wrap">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
-            <input className="input" placeholder="Search..." value={search} onChange={e => { setSearch(e.target.value); setPage(1); }} style={{width:180}} />
+            <input className="input" placeholder="Search..." value={search} onChange={e => setSearch(e.target.value)} style={{width:180}} />
           </div>
           <select className="input" value={sort} onChange={e => setSort(e.target.value)} style={{width:140,fontSize:13}}>
             <option value="default">Sort: Default</option>
@@ -120,7 +116,7 @@ export default function ProductList() {
       <div className="product-grid stagger">
         {loading
           ? [...Array(4)].map((_, i) => <SkeletonCard key={i} />)
-          : displayed.map(p => (
+          : filtered.map(p => (
               <div className="product-card" key={p._id}>
                 <div className="product-img" style={{ position: "relative" }}>
                   <ProductImg src={p.image} alt={p.name} />
@@ -153,14 +149,6 @@ export default function ProductList() {
             ))
         }
       </div>
-
-      {hasMore && (
-        <div className="load-more">
-          <button className="btn btn-primary" onClick={() => setPage(p => p + 1)}>
-            Load More ({filtered.length - displayed.length} remaining)
-          </button>
-        </div>
-      )}
 
       {!loading && filtered.length === 0 && (
         <div className="cart-empty">
