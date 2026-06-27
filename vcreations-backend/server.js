@@ -17,7 +17,7 @@ let dbReady = false;
 let dbReadyResolve;
 const dbReadyPromise = new Promise(r => { dbReadyResolve = r; });
 
-mongoose.set("bufferTimeoutMS", 10000);
+mongoose.set("bufferTimeoutMS", 3000);
 mongoose.connection.on("disconnected", () => { console.log("Mongoose disconnected"); });
 mongoose.connection.on("error", err => { console.error("Mongoose error:", err.message); });
 mongoose.connection.on("reconnected", () => { console.log("Mongoose reconnected"); });
