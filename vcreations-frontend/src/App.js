@@ -57,9 +57,6 @@ function Header() {
         <Link to="/cart" className={location.pathname === "/cart" ? "nav-link active" : "nav-link"}>Cart</Link>
         <Link to="/checkout" className={location.pathname === "/checkout" ? "nav-link active" : "nav-link"}>Checkout</Link>
         <Link to={userEmail ? "/orders" : "/login"} className={location.pathname === "/orders" || location.pathname === "/login" ? "nav-link active" : "nav-link"}>{userEmail ? "My Orders" : "Login"}</Link>
-        <span className="nav-link nav-promo">🪢 Rakhi Collection</span>
-        <span className="nav-link nav-promo">✨ Premium Rakhis</span>
-        <span className="nav-link nav-promo">🎀 Best Sellers</span>
       </nav>
     </header>
   );
