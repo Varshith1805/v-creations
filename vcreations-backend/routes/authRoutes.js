@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const axios = require("axios");
-const User = require("../models/User");
+// const User = require("../models/User");
 const Order = require("../models/Order");
 const Otp = require("../models/Otp");
 
@@ -66,15 +66,7 @@ router.post("/verify-otp", async (req, res) => {
 
   if (!valid) return res.status(400).json({ error: "Invalid or expired OTP" });
 
-  let user = await User.findOne({ email });
-  if (!user) {
-    user = await new User({ email, name: name || "" }).save();
-  } else if (name) {
-    user.name = name;
-    await user.save();
-  }
-
-  res.json({ message: "Login successful", email: user.email, name: user.name || "", userId: user._id });
+  res.json({ message: "Login successful", email, name: name || "" });
 });
 
 router.get("/orders/:email", async (req, res) => {
