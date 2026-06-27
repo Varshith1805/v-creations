@@ -137,11 +137,14 @@ export default function AdminDashboard() {
                 <label>Category</label>
                 <select className="input" name="category" value={form.category} onChange={handleChange}>
                   <option value="">Select category</option>
-                  <option value="Designer Rakhis">Designer Rakhis</option>
-                  <option value="Silver Rakhis">Silver Rakhis</option>
-                  <option value="Gold Rakhis">Gold Rakhis</option>
-                  <option value="Kids Rakhis">Kids Rakhis</option>
-                  <option value="Premium Rakhis">Premium Rakhis</option>
+                  <option value="Fancy Rakhi">Fancy Rakhi</option>
+                  <option value="Pendent Rakhi">Pendent Rakhi</option>
+                  <option value="Disney Rakhi">Disney Rakhi</option>
+                  <option value="Kids Rakhi">Kids Rakhi</option>
+                  <option value="Pair Rakhi">Pair Rakhi</option>
+                  <option value="Evil Eye Rakhi">Evil Eye Rakhi</option>
+                  <option value="Rudraksha Rakhi">Rudraksha Rakhi</option>
+                  <option value="Bracelet Rakhi">Bracelet Rakhi</option>
                 </select>
               </div>
             </div>

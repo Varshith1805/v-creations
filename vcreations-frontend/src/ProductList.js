@@ -64,7 +64,7 @@ export default function ProductList() {
   if (sort === "price-asc") filtered.sort((a, b) => a.price - b.price);
   if (sort === "price-desc") filtered.sort((a, b) => b.price - a.price);
 
-  const categories = ["All"];
+  const categories = ["All", "Fancy Rakhi", "Pendent Rakhi", "Disney Rakhi", "Kids Rakhi", "Pair Rakhi", "Evil Eye Rakhi", "Rudraksha Rakhi", "Bracelet Rakhi"];
 
   const SkeletonCard = () => (
     <div className="product-card">
