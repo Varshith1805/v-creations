@@ -73,14 +73,23 @@ export default function UserOrders() {
                   <span style={{ fontSize: 20, fontWeight: 800, color: "var(--c-primary)" }}>₹{o.totalAmount}</span>
                 </div>
                 {o.status === "pending" && config.whatsappNumber && (
-                  <div style={{ marginTop: 12, borderTop: "1px solid #eee", paddingTop: 12 }}>
-                    <p style={{ fontSize: 12, color: "#888", marginBottom: 8 }}>
-                      Pay via UPI: <strong>{config.upiId}</strong>
-                    </p>
+                  <div style={{ marginTop: 12, borderTop: "1px solid #eee", paddingTop: 12, textAlign:"center" }}>
+                    <p style={{ fontSize: 13, fontWeight:600, marginBottom: 8 }}>Pay ₹{o.totalAmount}</p>
+
+                    <a href={`upi://pay?pa=${config.upiId}&pn=V%20Creations&am=${o.totalAmount}&cu=INR&tn=Order%20%23${o._id?.slice(-8)?.toUpperCase() || ""}`}
+                      className="btn"
+                      style={{ display:"inline-block", background:"var(--c-primary)", color:"white", fontWeight:600, fontSize:13, padding:"8px 20px", borderRadius:6, textDecoration:"none", marginBottom:8 }}>
+                      Pay with UPI
+                    </a>
+
+                    <div style={{ fontSize: 12, color: "#888", marginBottom: 8 }}>
+                      UPI ID: <strong>{config.upiId}</strong>
+                    </div>
+
                     <a href={waUrl} target="_blank" rel="noopener noreferrer"
                       className="btn"
                       style={{ display: "inline-flex", alignItems: "center", gap: 6, background: "#25D366", color: "white", fontWeight: 600, fontSize: 13, padding: "8px 16px", borderRadius: 6, textDecoration: "none" }}>
-                      Pay via WhatsApp
+                      Confirm on WhatsApp
                     </a>
                   </div>
                 )}
