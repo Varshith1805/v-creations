@@ -13,6 +13,14 @@ app.get("/health", (req, res) => {
   res.status(200).json({ status: "ok" });
 });
 
+// Public config endpoint — readable at runtime, no rebuild needed
+app.get("/config", (req, res) => {
+  res.json({
+    upiId: process.env.UPI_ID || "8143435500@ybl",
+    whatsappNumber: process.env.WHATSAPP_NUMBER || "918143435500"
+  });
+});
+
 let dbReady = false;
 let dbReadyResolve;
 const dbReadyPromise = new Promise(r => { dbReadyResolve = r; });
