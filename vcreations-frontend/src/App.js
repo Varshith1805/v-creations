@@ -57,14 +57,6 @@ function Header() {
         <Link to="/cart" className={location.pathname === "/cart" ? "nav-link active" : "nav-link"}>Cart</Link>
         <Link to="/checkout" className={location.pathname === "/checkout" ? "nav-link active" : "nav-link"}>Checkout</Link>
         <Link to={userEmail ? "/orders" : "/login"} className={location.pathname === "/orders" || location.pathname === "/login" ? "nav-link active" : "nav-link"}>{userEmail ? "My Orders" : "Login"}</Link>
-        <span className="nav-link nav-promo">Fancy Rakhi</span>
-        <span className="nav-link nav-promo">Pendent Rakhi</span>
-        <span className="nav-link nav-promo">Disney Rakhi</span>
-        <span className="nav-link nav-promo">Kids Rakhi</span>
-        <span className="nav-link nav-promo">Pair Rakhi</span>
-        <span className="nav-link nav-promo">Evil Eye Rakhi</span>
-        <span className="nav-link nav-promo">Rudraksha Rakhi</span>
-        <span className="nav-link nav-promo">Bracelet Rakhi</span>
       </nav>
     </header>
   );
