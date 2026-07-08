@@ -1,9 +1,21 @@
 const express = require("express");
 const router = express.Router();
 const mongoose = require("mongoose");
-const bcrypt = require("bcryptjs");
+const crypto = require("crypto");
 const User = require("../models/User");
 const Order = require("../models/Order");
+
+function hashPassword(password) {
+  const salt = crypto.randomBytes(16).toString("hex");
+  const hash = crypto.pbkdf2Sync(password, salt, 1000, 64, "sha512").toString("hex");
+  return salt + ":" + hash;
+}
+
+function verifyPassword(password, stored) {
+  const [salt, key] = stored.split(":");
+  const hash = crypto.pbkdf2Sync(password, salt, 1000, 64, "sha512").toString("hex");
+  return key === hash;
+}
 
 router.post("/signup", async (req, res) => {
   if (mongoose.connection.readyState !== 1) return res.status(503).json({ error: "Please wait, server is starting..." });
@@ -15,7 +27,7 @@ router.post("/signup", async (req, res) => {
     const existing = await User.findOne({ email });
     if (existing) return res.status(400).json({ error: "Email already registered" });
 
-    const hashedPassword = await bcrypt.hash(password, 10);
+    const hashedPassword = hashPassword(password);
     const user = new User({ name, email, password: hashedPassword });
     await user.save();
 
@@ -35,7 +47,7 @@ router.post("/login", async (req, res) => {
     const user = await User.findOne({ email });
     if (!user || !user.password) return res.status(400).json({ error: "Invalid email or password" });
 
-    const match = await bcrypt.compare(password, user.password);
+    const match = verifyPassword(password, user.password);
     if (!match) return res.status(400).json({ error: "Invalid email or password" });
 
     res.json({ message: "Login successful", email: user.email, name: user.name || "" });
