@@ -1,15 +1,17 @@
 import React, { useState } from "react";
 import axios from "axios";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useCart } from "./CartContext";
 
 export default function Login() {
   const { login } = useCart();
   const navigate = useNavigate();
+  const location = useLocation();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const successMsg = location.state?.success || "";
 
   const handleSubmit = async e => {
     e.preventDefault();
@@ -20,7 +22,7 @@ export default function Login() {
     try {
       const res = await axios.post("/auth/login", { email, password });
       login(res.data.email, res.data.name || "");
-      navigate("/orders");
+      navigate("/");
     } catch (err) {
       setError(err.response?.data?.error || "Login failed");
     } finally {
@@ -34,6 +36,7 @@ export default function Login() {
         <h2 style={{ marginBottom: 16 }}>Login</h2>
         <p style={{ color: "#666", marginBottom: 24, fontSize: 14 }}>Enter your email and password to login</p>
 
+        {successMsg && <p style={{color:"#007600",background:"#e8f5e9",padding:"10px 16px",borderRadius:8,marginBottom:12,fontSize:14}}>{successMsg}</p>}
         {error && <p className="admin-error">{error}</p>}
 
         <form onSubmit={handleSubmit}>

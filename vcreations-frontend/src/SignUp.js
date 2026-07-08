@@ -19,7 +19,7 @@ export default function SignUp() {
     setError("");
     try {
       await axios.post("/auth/signup", { name, email, password });
-      navigate("/login");
+      navigate("/login", { state: { success: "Account created successfully! Please login." } });
     } catch (err) {
       setError(err.response?.data?.error || "Sign up failed");
     } finally {
