@@ -55,7 +55,7 @@ router.get("/download-excel", async (req, res) => {
       const itemsStr = o.products.map(p => `${p.name} x${p.quantity} (₹${p.price})`).join(", ");
       worksheet.addRow({
         _id: o._id.toString(),
-        date: new Date(o.createdAt).toLocaleString("en-IN"),
+        date: new Date(o.createdAt).toLocaleString("en-IN", { timeZone: "Asia/Kolkata" }),
         customerName: o.customerName,
         email: o.email,
         phone: o.phone || "",
