@@ -1,10 +1,12 @@
 const express = require("express");
 const router = express.Router();
+const mongoose = require("mongoose");
 const bcrypt = require("bcryptjs");
 const User = require("../models/User");
 const Order = require("../models/Order");
 
 router.post("/signup", async (req, res) => {
+  if (mongoose.connection.readyState !== 1) return res.status(503).json({ error: "Please wait, server is starting..." });
   const { name, email, password } = req.body;
   if (!name || !email || !password) return res.status(400).json({ error: "All fields are required" });
   if (password.length < 6) return res.status(400).json({ error: "Password must be at least 6 characters" });
@@ -25,12 +27,13 @@ router.post("/signup", async (req, res) => {
 });
 
 router.post("/login", async (req, res) => {
+  if (mongoose.connection.readyState !== 1) return res.status(503).json({ error: "Please wait, server is starting..." });
   const { email, password } = req.body;
   if (!email || !password) return res.status(400).json({ error: "Email and password required" });
 
   try {
     const user = await User.findOne({ email });
-    if (!user) return res.status(400).json({ error: "Invalid email or password" });
+    if (!user || !user.password) return res.status(400).json({ error: "Invalid email or password" });
 
     const match = await bcrypt.compare(password, user.password);
     if (!match) return res.status(400).json({ error: "Invalid email or password" });
@@ -43,8 +46,13 @@ router.post("/login", async (req, res) => {
 });
 
 router.get("/orders/:email", async (req, res) => {
-  const orders = await Order.find({ email: req.params.email }).sort({ createdAt: -1 });
-  res.json(orders);
+  if (mongoose.connection.readyState !== 1) return res.status(503).json({ error: "Please wait, server is starting..." });
+  try {
+    const orders = await Order.find({ email: req.params.email }).sort({ createdAt: -1 });
+    res.json(orders);
+  } catch (err) {
+    res.json([]);
+  }
 });
 
 module.exports = router;
