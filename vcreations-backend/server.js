@@ -31,6 +31,11 @@ async function connectDB() {
         socketTimeoutMS: 45000
       });
       console.log("MongoDB connected:", process.env.MONGO_URI);
+      // Drop old OTP-era mobile index if it exists
+      try {
+        await mongoose.connection.db.collection("users").dropIndex("mobile_1");
+        console.log("Dropped stale mobile_1 index");
+      } catch (_) {}
     } else {
       const { MongoMemoryServer } = require("mongodb-memory-server");
       const mongod = await MongoMemoryServer.create();
