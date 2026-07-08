@@ -7,6 +7,7 @@ import Cart from "./Cart";
 import AdminDashboard from "./AdminDashboard";
 import Checkout from "./Checkout";
 import Login from "./Login";
+import SignUp from "./SignUp";
 import UserOrders from "./UserOrders";
 import "./design-system.css";
 import "./App.css";
@@ -99,6 +100,7 @@ function AppLayout() {
           <Route path="/checkout" element={<Checkout />} />
           <Route path="/admin" element={<AdminDashboard />} />
           <Route path="/login" element={<Login />} />
+          <Route path="/signup" element={<SignUp />} />
           <Route path="/orders" element={<UserOrders />} />
         </Routes>
       </main>
