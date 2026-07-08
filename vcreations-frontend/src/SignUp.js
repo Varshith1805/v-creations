@@ -59,7 +59,7 @@ export default function SignUp() {
 
         <p style={{ marginTop: 20, fontSize: 14, color: "#666" }}>
           Already have an account?{" "}
-          <Link to="/login" style={{ color: "var(--c-primary)", fontWeight: 600, textDecoration: "none" }}>Sign In</Link>
+          <Link to="/login" style={{ color: "var(--c-primary)", fontWeight: 600, textDecoration: "none" }}>Login</Link>
         </p>
       </div>
     </div>

@@ -70,10 +70,10 @@ function HomeRoute() {
 
 function AppLayout() {
   const location = useLocation();
-  const isLogin = location.pathname === "/login";
+  const isAuthPage = location.pathname === "/login" || location.pathname === "/signup";
   return (
     <>
-      {!isLogin && (
+      {!isAuthPage && (
         <>
           <div className="floating-shapes" aria-hidden="true">
             <div className="floating-shape floating-shape--circle" />
@@ -93,7 +93,7 @@ function AppLayout() {
           <Header />
         </>
       )}
-      <main className={isLogin ? "" : "container"} style={isLogin ? {position:"relative",zIndex:1} : {position:"relative",zIndex:1,paddingTop:"32px",paddingBottom:"64px"}}>
+      <main className={isAuthPage ? "" : "container"} style={isAuthPage ? {position:"relative",zIndex:1} : {position:"relative",zIndex:1,paddingTop:"32px",paddingBottom:"64px"}}>
         <Routes>
           <Route path="/" element={<HomeRoute />} />
           <Route path="/cart" element={<Cart />} />

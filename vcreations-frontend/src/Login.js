@@ -31,8 +31,8 @@ export default function Login() {
   return (
     <div style={{ maxWidth: 400, margin: "40px auto" }}>
       <div className="checkout-summary" style={{ textAlign: "center", padding: 32 }}>
-        <h2 style={{ marginBottom: 16 }}>Sign In</h2>
-        <p style={{ color: "#666", marginBottom: 24, fontSize: 14 }}>Enter your email and password to sign in</p>
+        <h2 style={{ marginBottom: 16 }}>Login</h2>
+        <p style={{ color: "#666", marginBottom: 24, fontSize: 14 }}>Enter your email and password to login</p>
 
         {error && <p className="admin-error">{error}</p>}
 
@@ -49,13 +49,13 @@ export default function Login() {
           </div>
           <button type="submit" className="btn btn-secondary" style={{ width: "100%", padding: 12, fontSize: 15 }}
             disabled={loading}>
-            {loading ? "Signing in..." : "Sign In"}
+            {loading ? "Logging in..." : "Login"}
           </button>
         </form>
 
         <p style={{ marginTop: 20, fontSize: 14, color: "#666" }}>
           Don't have an account?{" "}
-          <Link to="/signup" style={{ color: "var(--c-primary)", fontWeight: 600, textDecoration: "none" }}>Sign Up</Link>
+          <Link to="/signup" style={{ color: "var(--c-primary)", fontWeight: 600, textDecoration: "none" }}>Create Account</Link>
         </p>
       </div>
     </div>
